@@ -15,7 +15,7 @@ app = FastAPI()
 # Allow frontend access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change "*" to specific domain in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -45,7 +45,7 @@ async def parse_resume(file: UploadFile = File(...)):
 
 from pydantic import BaseModel
 from typing import List, Optional
-from app.db import supabase  # your existing supabase client
+from app.db import supabase
 
 class ExtractJobInfo(BaseModel):
     job_title: str
@@ -76,3 +76,25 @@ def save_jd(email: str, jd: ExtractJobInfo):
     }).execute()
 
     return {"message": "JD saved successfully", "email": email}
+
+
+
+from app.chat_agents import process_hr_query
+class HRQuery(BaseModel):
+    email: str
+    user_input: str
+
+
+@app.post("/hr-agent")
+def hr_agent(query: HRQuery) -> Dict:
+    """
+    Route for processing HR agent queries.
+    """
+    try:
+        result = process_hr_query(
+            email=query.email,
+            user_input=query.user_input
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
