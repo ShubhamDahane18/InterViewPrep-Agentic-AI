@@ -2,6 +2,8 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel
 
 class HRState(BaseModel):
+    user_input: str = ''
+    response: str = ''
     section_name: str = "intro"
     get_user_intent: bool = False
     is_qa: bool = False

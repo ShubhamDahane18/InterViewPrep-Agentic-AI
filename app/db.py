@@ -34,3 +34,55 @@ def get_resume(email: str) -> dict | None:
     if response.data:
         return response.data[0]  # return first row
     return None
+
+# -----------------------------
+# Resume Helper
+# -----------------------------
+def get_hr_resume(email: str) -> Optional[Dict]:
+    """Fetch candidate resume details and return as dict for HRState.resume_info."""
+    resume_resp = (
+        supabase.table("resumes")
+        .select("name, experience, extracurriculars")
+        .eq("email", email)
+        .execute()
+    )
+
+    if not resume_resp.data:
+        return None
+
+    return resume_resp.data[0]  # { "name": ..., "experience": [...], "extracurriculars": [...] }
+
+
+def get_jd(email: str) -> Optional[Dict]:
+    """Fetch job description details and return as dict for HRState.jd_info."""
+    jd_resp = (
+        supabase.table("job_description")
+        .select("*")
+        .eq("email", email)
+        .execute()
+    )
+
+    if not jd_resp.data:
+        return None
+
+    return jd_resp.data[0]
+
+
+from INTERVIEW.HR.state import HRState
+from typing import List, Optional , Dict
+
+# -----------------------------
+# Helpers
+# -----------------------------
+def get_hr_state(email: str) -> Optional[HRState]:
+    result = supabase.table("hr_states").select("state").eq("email", email).execute()
+    if result.data:
+        return HRState(**result.data[0]["state"])
+    return None
+
+
+def save_hr_state(email: str, state: HRState):
+    supabase.table("hr_states").upsert({
+        "email": email,
+        "state": state.dict()
+    }).execute()
