@@ -8,7 +8,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 # GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 # Replace this with your actual key or load from environment
-GOOGLE_API_KEY = "AIzaSyADZ2kDnuJqRZbai-bzIlHnZM3S-9lEMsw"
+GOOGLE_API_KEY = ""
 
 # A fast, cost-effective model for generating questions
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite", google_api_key=GOOGLE_API_KEY)
