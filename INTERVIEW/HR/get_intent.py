@@ -48,8 +48,8 @@ class IntentSchema(BaseModel):
 from typing import Literal
 from langgraph.graph import END
 from langgraph.types import Command
-from BACKEND.INTERVIEW.util import load_llm
-from BACKEND.INTERVIEW.HR.state import HRState
+from INTERVIEW.util import load_llm
+from INTERVIEW.HR.state import HRState
 
 def get_user_intent_node(state: HRState) -> Command[Literal["hr_round", END]]:
     # 1. Decide enforce_limit dynamically

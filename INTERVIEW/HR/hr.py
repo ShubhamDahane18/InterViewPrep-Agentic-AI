@@ -50,8 +50,8 @@ Ensure the question is natural, contextual, and avoids unnecessary repetition.
 
 
 
-from BACKEND.INTERVIEW.util import load_llm
-from BACKEND.INTERVIEW.HR.state import HRState
+from INTERVIEW.util import load_llm
+from INTERVIEW.HR.state import HRState
 
 def format_prev_qas(qas: list[dict]) -> str:
     if not qas:

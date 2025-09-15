@@ -16,8 +16,8 @@ Job Role: {job_role}
 ])
 
 
-from BACKEND.INTERVIEW.util import load_llm
-from BACKEND.INTERVIEW.HR.state import HRState
+from INTERVIEW.util import load_llm
+from INTERVIEW.HR.state import HRState
 
 
 def interviewer_intro_node(state: HRState) -> HRState:

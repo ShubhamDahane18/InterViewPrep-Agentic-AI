@@ -3,7 +3,7 @@
 # -------------------------
 from typing import Literal
 from langgraph.types import Command
-from BACKEND.INTERVIEW.HR.state import HRState
+from INTERVIEW.HR.state import HRState
 
 
 def router_node(state: HRState) -> Command[Literal["get_user_intent", "ask_user_what_next", "hr_round"]]:
