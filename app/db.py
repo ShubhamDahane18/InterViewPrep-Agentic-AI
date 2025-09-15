@@ -1,7 +1,7 @@
 from supabase import create_client, Client
 import os
-from BACKEND.INTERVIEW.RESUME.schema import ExtractResumeData
-from BACKEND.INTERVIEW.RESUME.state import ResumeAgentState
+from INTERVIEW.RESUME.schema import ExtractResumeData
+from INTERVIEW.RESUME.state import ResumeAgentState
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")

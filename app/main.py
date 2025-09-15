@@ -2,13 +2,12 @@
 from fastapi import FastAPI, UploadFile, File , HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import sys , os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from INTERVIEW.util import extract_text_and_links_from_pdf
 from INTERVIEW.RESUME.graph import build_graph
 
 from typing import Dict
-from BACKEND.app.db import save_resume
-from BACKEND.INTERVIEW.RESUME.schema import ExtractResumeData
+from app.db import save_resume
+from INTERVIEW.RESUME.schema import ExtractResumeData
 
 
 app = FastAPI()
@@ -46,7 +45,7 @@ async def parse_resume(file: UploadFile = File(...)):
 
 from pydantic import BaseModel
 from typing import List, Optional
-from BACKEND.app.db import supabase  # your existing supabase client
+from app.db import supabase  # your existing supabase client
 
 class ExtractJobInfo(BaseModel):
     job_title: str
