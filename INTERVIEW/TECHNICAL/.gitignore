@@ -1,0 +1,45 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+*.egg-info/
+*.egg
+
+# Virtual environment
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs & Debug
+*.log
+
+# Config & Secrets
+.env
+*.json
+*.yaml
+*.yml
+
+# LangChain / Cache
+.lc_cache/
+.langchain/
+
+# Project specific
+exports/
+reports/
