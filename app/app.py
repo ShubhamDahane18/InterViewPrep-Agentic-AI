@@ -64,3 +64,4 @@ with st.form("jd_form"):
                 st.json(jd.dict())
             else:
                 st.error(f"Failed to save JD: {resp.text}")
+

@@ -34,7 +34,7 @@ async def parse_resume(file: UploadFile = File(...)):
     input_state = {"full_text": text, "links": links}
     final_state: Dict = graph.invoke(input_state)
 
-    # Step 3: Save to Supabase and validate schema
+    # Step 3: Save to SupaB0ase and validate schema
     try:
         saved_resume = save_resume(final_state)
     except ValueError as e:
