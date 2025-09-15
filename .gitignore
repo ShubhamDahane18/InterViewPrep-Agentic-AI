@@ -1,1 +1,4 @@
 .env
+__pycache__/
+*.pyc
+resume-parser-frontend/node_modules
