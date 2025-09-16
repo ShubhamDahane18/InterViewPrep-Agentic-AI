@@ -57,7 +57,7 @@ from langgraph.types import Command
 from typing import Literal
 from langgraph.graph import END
 from INTERVIEW.util import load_llm
-from INTERVIEW.PROJECT.state import ProjectState  # <-- your project state model
+from INTERVIEW.Project.state import ProjectState  # <-- your project state model
 
 def get_project_intent_node(state: ProjectState) -> Command[Literal["project_round", END]]:
     # 1. Enforce limit if too many QAs in this project
