@@ -57,7 +57,7 @@ def get_hr_resume(email: str) -> Optional[Dict]:
 def get_jd(email: str) -> Optional[Dict]:
     """Fetch job description details and return as dict for HRState.jd_info."""
     jd_resp = (
-        supabase.table("job_description")
+        supabase.table("job_descriptions")
         .select("*")
         .eq("email", email)
         .execute()
