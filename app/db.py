@@ -2,6 +2,7 @@ from supabase import create_client, Client
 import os
 from INTERVIEW.RESUME.schema import ExtractResumeData
 from INTERVIEW.RESUME.state import ResumeAgentState
+from typing import List, Optional , Dict
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
