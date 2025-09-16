@@ -82,7 +82,7 @@ def process_project_query(email: str, user_input: str) -> Dict:
     responses = []
     projects = state.resume_info.get("projects", []) if state.resume_info else []
     
-    project = project_graph()
+    project = Project_graph()
     new_state = project.invoke(state_dict)
 
     # Update state with project-specific changes

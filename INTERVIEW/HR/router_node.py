@@ -6,7 +6,7 @@ from langgraph.types import Command
 from INTERVIEW.HR.state import HRState
 
 
-def router_node(state: HRState) -> Command[Literal["get_user_intent", "ask_user_what_next", "hr_round"]]:
+def router_node(state: HRState) -> Command[Literal["get_user_intent_node", "ask_user_what_next", "hr_round"]]:
     """Route control flow to the right node based on interview state."""
 
     if state.is_qa:
@@ -18,7 +18,7 @@ def router_node(state: HRState) -> Command[Literal["get_user_intent", "ask_user_
     
     if state.get_user_intent:
         return Command(
-            goto="get_user_intent" , 
+            goto="get_user_intent_node" , 
             update={
             "is_qa": False
             }
