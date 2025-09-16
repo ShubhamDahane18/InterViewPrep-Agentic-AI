@@ -100,12 +100,12 @@ def hr_agent(query: UserQuery) -> Dict:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# from app.chat_agents import process_project_query
+from app.chat_agents import process_project_query
 
-# @app.post("/project-agent")
-# def project_agent(query: UserQuery):
-#     try:
-#         result = process_project_query(query.email, query.user_input)
-#         return result
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
+@app.post("/project-agent")
+def project_agent(query: UserQuery):
+    try:
+        result = process_project_query(query.email, query.user_input)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

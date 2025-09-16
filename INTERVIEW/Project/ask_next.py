@@ -1,5 +1,6 @@
 from langchain.prompts import ChatPromptTemplate
 
+
 ask_next_project_prompt = ChatPromptTemplate.from_messages([
     ("system", """
 You are an interviewer wrapping up the discussion of one project in a technical/project round.
@@ -27,7 +28,7 @@ def format_prev_qas(qas: list[dict]) -> str:
 
 
 from INTERVIEW.util import load_llm
-from state import ProjectState  # <-- your project state model
+from INTERVIEW.Project.state import ProjectState  # <-- your project state model
 
 def ask_user_next_project_node(state: ProjectState) -> ProjectState:
     """Use LLM to summarize current project Q&A and ask what candidate wants to do next."""

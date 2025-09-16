@@ -61,7 +61,7 @@ def format_prev_qas(qas: list[dict]) -> str:
         for qa in qas
     )
 
-def hr_round_node(state: HRState) -> HRState:
+def project_round_node(state: HRState) -> HRState:
     """Generate next HR interview question for the current round."""
 
     # Get context: previous Q/A in this round
