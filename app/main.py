@@ -80,13 +80,13 @@ def save_jd(email: str, jd: ExtractJobInfo):
 
 
 from app.chat_agents import process_hr_query
-class HRQuery(BaseModel):
+class UserQuery(BaseModel):
     email: str
     user_input: str
 
 
 @app.post("/hr-agent")
-def hr_agent(query: HRQuery) -> Dict:
+def hr_agent(query: UserQuery) -> Dict:
     """
     Route for processing HR agent queries.
     """
@@ -95,6 +95,17 @@ def hr_agent(query: HRQuery) -> Dict:
             email=query.email,
             user_input=query.user_input
         )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+from app.chat_agents import process_project_query
+
+@app.post("/project-agent")
+def project_agent(query: UserQuery):
+    try:
+        result = process_project_query(query.email, query.user_input)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

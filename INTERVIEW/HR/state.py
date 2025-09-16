@@ -5,7 +5,7 @@ class HRState(BaseModel):
     user_input: str = ''
     response: str = ''
     limit: int = 5
-    section_name: str = "intro"
+    section_name: str = "interviewer_intro"
     get_user_intent: bool = False
     is_qa: bool = False
     
