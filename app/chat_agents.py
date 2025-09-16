@@ -35,6 +35,8 @@ def process_hr_query(email: str, user_input: str) -> Dict:
         jd_info = get_jd(email)
         if jd_info:
             state.jd_info = jd_info
+    
+    state.limit = 5
 
     # Step 5: Pass user input into state for HR graph
     state_dict = state.dict()
