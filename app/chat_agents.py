@@ -8,7 +8,7 @@ from app.db import save_hr_state, get_hr_state, get_hr_resume, get_jd
 from typing import Dict
 
 
-def process_hr_query(email: str, user_input: str) -> Dict:
+def process_hr_query(email: str, user_input: str) -> str:
     """
     Process a user input for the HR agent:
     - If user doesn't exist, create empty state
@@ -54,9 +54,7 @@ def process_hr_query(email: str, user_input: str) -> Dict:
     save_hr_state(email, new_state)
 
     # Step 7: Return
-    return {
-        "hr_response": new_state.dict().get("response"),
-    }
+    return new_state.dict().get("response")
 
 
 from INTERVIEW.Project.project_graph import Project_graph # assuming you have a project graph
