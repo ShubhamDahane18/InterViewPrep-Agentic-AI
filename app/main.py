@@ -86,7 +86,7 @@ class UserQuery(BaseModel):
 
 
 @app.post("/hr-agent")
-def hr_agent(query: UserQuery) -> Dict:
+def hr_agent(query: UserQuery) -> str:  
     """
     Route for processing HR agent queries.
     """
