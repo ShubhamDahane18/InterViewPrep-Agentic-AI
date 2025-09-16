@@ -14,7 +14,7 @@ def router_node(state: HRState) -> Command[Literal["get_user_intent", "ask_user_
             "question": state.response,   # system's last asked question
             "answer": state.user_input    # candidate's answer
         }
-        state.questions_answers.setdefault(state.round_name, []).append(qa_pair)
+        state.questions_answers.setdefault(state.section_name, []).append(qa_pair) 
     
     if state.get_user_intent:
         return Command(
@@ -24,7 +24,7 @@ def router_node(state: HRState) -> Command[Literal["get_user_intent", "ask_user_
             }
         )
     
-    elif state.question_count >= len([state.round_name]):
+    elif len(state.questions_answers.get(state.section_name, [])) > 0 and len(state.questions_answers.get(state.section_name, [])) % state.limit == 0:
         return Command(
             goto="ask_user_what_next" , 
             update={

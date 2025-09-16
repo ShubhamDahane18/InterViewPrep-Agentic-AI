@@ -53,7 +53,7 @@ from INTERVIEW.HR.state import HRState
 
 def get_user_intent_node(state: HRState) -> Command[Literal["hr_round", END]]:
     # 1. Decide enforce_limit dynamically
-    enforce_limit = len(state.questions_answers.get(state.round_name, [])) >= 20
+    enforce_limit = len(state.questions_answers.get(state.section_name, [])) >= state.limit * 2
 
     # 2. Run intent classifier
     llm = load_llm()
