@@ -1,7 +1,7 @@
 from graph import build_graph
 from state import TechRoundState, ExtractJobInfo
 from io_utils import present_to_user
-from db_helpers import get_jd
+from app.db import get_jd
 
 def fetch_job_info(candidate_email: str) -> ExtractJobInfo | None:
     jd_data = get_jd(candidate_email)

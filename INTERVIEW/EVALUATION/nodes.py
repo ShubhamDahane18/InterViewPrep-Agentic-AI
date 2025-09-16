@@ -1,195 +1,98 @@
+from config import evaluator_llm , llm ,resource_llm
 from state import EvaluationState
-from schema import FullEvaluation, RoundEvaluation
-from utils import present_to_user, clean_json
-from datetime import datetime
-import json
+from schema import RoundEvaluation, Summary, FinalReport, ResourceItem
+from datetime import date
 
-# Replace with your actual LLM instances
-from config import evaluator_llm, resource_llm , llm
 
+# --- Evaluation Node ---
 def evaluation_node(state: EvaluationState) -> EvaluationState:
-    """
-    Evaluate all rounds present in state['rounds'] using structured LLM output.
-    """
-    structured_eval_llm = llm.with_structured_output(schema=FullEvaluation)
-    state.setdefault("evaluation", {})
+    evaluations = {}
 
     for round_data in state.get("rounds", []):
         round_name = round_data["round_name"].lower()
-        qa_text = "\n".join([f"Q: {qa['question']}\nA: {qa['answer']}" for qa in round_data.get("qa", [])])
-        prompt = f"""You are an expert recruiter and career coach. Evaluate the candidate for {state.get('company_name','Unknown')}.
+        qa_pairs = round_data["qa"]
+        qa_text = "\n".join([f"Q: {qa['question']}\nA: {qa['answer']}" for qa in qa_pairs])
 
-        Candidate Info:
-        - Name: state.get('candidate_name','XYZ')
-        - Email: state.get('candidate_email','--')
-
-        Rounds Q&A:
-        {qa_text}
-
-        For each round (Tech, Project, HR), provide the following in a JSON object:
-        1. Score (0.0–10.0)
-        2. Concise feedback
-        3. Detailed reasoning behind the score
-        4. List of strengths (explain why each is a strength)
-        5. List of weaknesses (explain why each is a weakness)
-        6. Actionable suggestions for improvement
-        7. Any relevant examples or references that can help the candidate
-
-        Return ONLY valid JSON.
-
-        """
+        structured_eval_llm = evaluator_llm.with_structured_output(RoundEvaluation)
         try:
-            eval_result = structured_eval_llm.invoke(prompt)
-            # Some rounds may be missing in the structured output → use .get(round_name, None)
-            round_eval = eval_result.model_dump().get(round_name)
-            state["evaluation"][round_name] = round_eval
+            eval_result = structured_eval_llm.invoke(
+                f"Evaluate the following {round_name} interview responses:\n\n{qa_text}\n\n"
+                "Provide a score (0–10), feedback, reasoning, strengths, weaknesses, suggestions, and examples."
+            )
+            evaluations[round_name] = eval_result.dict()
         except Exception as e:
-            present_to_user(f"⚠️ Evaluation failed for {round_name}: {e}")
-            state["evaluation"][round_name] = None
+            print(f"⚠️ Evaluation for {round_name} failed: {e}")
+            evaluations[round_name] = {
+                "score": 0,
+                "feedback": "No evaluation available.",
+                "strengths": [],
+                "weaknesses": [],
+                "suggestions": [],
+                "examples": []
+            }
 
+    state["evaluation"] = evaluations
     return state
 
+
+# --- Feedback Node ---
 def feedback_node(state: EvaluationState) -> EvaluationState:
-    """
-    Generate concise feedback for each round present in state['evaluation'].
-    """
-    state.setdefault("feedback", {})
-
+    feedbacks = {}
     for round_name, eval_data in state.get("evaluation", {}).items():
-        if eval_data:  # skip None
-            prompt = f"""
-            You are a career coach. Convert the candidate evaluation into detailed feedback for the candidate for {round_name}.
--           Include strengths, weaknesses, and actionable suggestions.
-            - Explain why each strength and weakness matters.
-            - Make it constructive and encouraging.
-            - Write it in readable paragraphs, not JSON.
-            - Use examples wherever possible to clarify points
-             Candidate Evaluation:
-             {eval_data}
-             Return plain text feedback.
-            """
-            llm_output = llm.invoke(prompt).content
-            state["feedback"][round_name] = llm_output.strip()
-        else:
-            state["feedback"][round_name] = "No evaluation available."
-
+        feedbacks[round_name] = llm.invoke(
+            f"Convert the following evaluation into constructive interview feedback for the candidate:\n\n{eval_data}"
+        ).content
+    state["feedback"] = feedbacks
     return state
 
+
+# --- Resource Node ---
 def resource_node(state: EvaluationState) -> EvaluationState:
-    """
-    Suggest learning resources based on weaknesses in all rounds.
-    """
-    state.setdefault("resources", {})
-    weaknesses = []
-
-    for eval_data in state.get("evaluation", {}).values():
-        if eval_data:
-            weaknesses += eval_data.get("weaknesses", [])
-
-    if weaknesses:
-        prompt = f"""
-        You are a career mentor. The candidate has the following weaknesses:
-        {', '.join(weaknesses)}
-
-        For each weakness, suggest 1–3 high-quality resources (books, tutorials, courses) that will help improve.
-        Return a JSON object with:
-        - keys = weakness
-        - values = list of resource objects
-          - type: Book / Course / Tutorial
-          - title
-          - author / platform
-          - short description
-        """
-        try:
-            raw = resource_llm.invoke(prompt).content
-            state["resources"] = clean_json(raw)
-        except Exception as e:
-            present_to_user(f"⚠️ Resource generation failed: {e}")
-            state["resources"] = {}
-
+    resources = {}
+    for round_name, eval_data in state.get("evaluation", {}).items():
+        weaknesses = eval_data.get("weaknesses", [])
+        if weaknesses:
+            res_list = []
+            for w in weaknesses:
+                suggestion = resource_llm.invoke(
+                    f"Suggest one learning resource (book, course, or tutorial) to improve on this weakness:\n{w}"
+                ).content
+                res_list.append(ResourceItem(name=suggestion))
+            resources[round_name] = res_list
+    state["resources"] = resources
     return state
 
+
+# --- Summary Node ---
 def summary_node(state: EvaluationState) -> EvaluationState:
-    """
-    Summarize candidate's performance across all rounds using an LLM
-    to provide detailed coaching-style insights.
-    """
-    evaluations = state.get("evaluation", {})
-    candidate_name = state.get("candidate_name", "Candidate")
-    
-    # Aggregate evaluation data
-    eval_text = ""
-    for round_name, eval_data in evaluations.items():
-        if eval_data:
-            eval_text += f"\n--- {round_name} Round ---\n"
-            eval_text += f"Score: {eval_data.get('score', 'N/A')}\n"
-            eval_text += f"Feedback: {eval_data.get('feedback', 'N/A')}\n"
-            eval_text += f"Strengths: {eval_data.get('strengths', [])}\n"
-            eval_text += f"Weaknesses: {eval_data.get('weaknesses', [])}\n"
+    all_strengths, all_weaknesses = [], []
+    for eval_data in state.get("evaluation", {}).values():
+        all_strengths.extend(eval_data.get("strengths", []))
+        all_weaknesses.extend(eval_data.get("weaknesses", []))
 
-    # Create prompt directly
-    prompt = f"""
-    You are a career coach. Provide a detailed, structured summary of a candidate's interview performance.
-
-    Candidate: {candidate_name}
-
-    Evaluations:{eval_text}
-
-    Generate the summary including:
-    1. Strengths (with explanations)
-    2. Weaknesses (with explanations)
-    3. Actionable coaching tips for improvement
-    4. Overall impression
-    """
-
-    # Invoke LLM
-    summary_text = llm.invoke(prompt).content
-
-    # Save summary in state
-    state["summary"] = summary_text
-
+    structured_summary_llm = evaluator_llm.with_structured_output(Summary)
+    summary = structured_summary_llm.invoke(
+        f"Summarize the candidate’s performance. Strengths: {all_strengths}. Weaknesses: {all_weaknesses}."
+    )
+    state["summary"] = summary.dict()
     return state
 
-def final_report_node(state: EvaluationState) -> dict:
-    """
-    Generates the final report for the candidate.
-    Always returns a dictionary (never a string).
-    """
 
-    candidate_name = state.get("candidate_name", "Unknown")
-    company = state.get("company_name", "Unknown")
-    interview_date = datetime.now().strftime("%Y-%m-%d")
-
-    # Collect evaluation data with safe defaults
-    eval_data = state.get("evaluation", {})
-    tech_eval = eval_data.get("tech") or {"score": 0.0, "feedback": "", "strengths": [], "weaknesses": []}
-    project_eval = eval_data.get("project") or {"score": 0.0, "feedback": "", "strengths": [], "weaknesses": []}
-
-    # Aggregate strengths and weaknesses
-    strengths = (tech_eval.get("strengths") or []) + (project_eval.get("strengths") or [])
-    weaknesses = (tech_eval.get("weaknesses") or []) + (project_eval.get("weaknesses") or [])
-
-    # Optionally include resources if present
-    resources = state.get("resources", {})
-
-    # Compose the final report
-    report = {
-        "candidate": {
-            "name": candidate_name,
-            "email": state.get("candidate_email", "N/A"),
-            "company": company,
-            "interview_date": interview_date
-        },
-        "evaluation": {
-            "tech": tech_eval,
-            "project": project_eval
-        },
-        "strengths": strengths,
-        "weaknesses": weaknesses,
-        "resources": resources,
-        "summary": state.get("summary", "")
+# --- Final Report Node ---
+def final_report_node(state: EvaluationState) -> EvaluationState:
+    candidate_info = {
+        "name": state.get("candidate_name", "N/A"),
+        "email": state.get("candidate_email", "N/A"),
+        "company": state.get("company_name", "N/A"),
+        "interview_date": str(date.today())
     }
 
-    return {"final_report": report}
-
-
+    final_report = FinalReport(
+        candidate=candidate_info,
+        evaluation=state.get("evaluation", {}),
+        feedback=state.get("feedback", {}),
+        resources=state.get("resources", {}),
+        summary=state.get("summary", {})
+    )
+    state["final_report"] = final_report.dict()
+    return state
