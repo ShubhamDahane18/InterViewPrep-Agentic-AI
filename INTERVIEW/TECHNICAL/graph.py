@@ -6,9 +6,6 @@ from nodes import (
     generate_qa_node,
     core_decision_node,
     tech_decision_node,
-    evaluation_node,
-    summary_node,
-    final_report_node,
 )
 
 def core_progress(state: TechRoundState) -> str:
@@ -35,9 +32,6 @@ def build_graph():
     workflow.add_node("tech_qa", partial(generate_qa_node, round_type="tech"))
     workflow.add_node("core_decision", core_decision_node)
     workflow.add_node("tech_decision", tech_decision_node)
-    workflow.add_node("evaluation", evaluation_node)
-    workflow.add_node("summary", summary_node)
-    workflow.add_node("final_report", final_report_node)
 
 
     workflow.add_edge(START, "core_qa")
@@ -53,11 +47,6 @@ def build_graph():
     workflow.add_conditional_edges(
         "tech_decision",
         lambda s: s.get("decision", {}).get("technical", "next"),
-        {"continue": "tech_qa", "next": "evaluation"}
+        {"continue": "tech_qa", "next": END}
     )
-
-    workflow.add_edge("evaluation", "summary")   
-    workflow.add_edge("summary", "final_report")   # go to final report
-    workflow.add_edge("final_report", END)         # then end
-
     return workflow.compile()
