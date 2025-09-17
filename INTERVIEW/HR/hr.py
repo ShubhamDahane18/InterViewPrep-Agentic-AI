@@ -77,4 +77,7 @@ def hr_round_node(state: HRState) -> HRState:
     llm = load_llm()
     response = llm.invoke(prompt)
     question = response.content.strip()
+    if state.section_name == "interviewer_intro":
+        return {"response":question , "get_user_intent":True}
     return {"response":question , "is_qa":True}
+    
