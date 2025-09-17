@@ -2,6 +2,9 @@ from supabase import create_client, Client
 import os
 from INTERVIEW.RESUME.schema import ExtractResumeData
 from INTERVIEW.RESUME.state import ResumeAgentState
+from INTERVIEW.TECHNICAL.state import TechRoundState
+from INTERVIEW.EVALUATION.state import EvaluationState
+from INTERVIEW.Project.state import ProjectState
 from typing import List, Optional , Dict
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -84,6 +87,49 @@ def get_hr_state(email: str) -> Optional[HRState]:
 
 def save_hr_state(email: str, state: HRState):
     supabase.table("hr_states").upsert({
+        "email": email,
+        "state": state.dict()
+    }).execute()
+    
+# -----------------------------
+# Helpers
+# -----------------------------
+    
+def get_tech_state(email: str) -> Optional[TechRoundState]:
+    result = supabase.table("technical_states").select("state").eq("email", email).execute()
+    if result.data:
+        return HRState(**result.data[0]["state"])
+    return None
+
+def save_tech_state(email: str, state: TechRoundState):
+    supabase.table("technical_states").upsert({
+        "email": email,
+        "state": state.dict()
+    }).execute()
+    
+    
+def get_project_state(email: str) -> Optional[ProjectState]:
+    result = supabase.table("project_states").select("state").eq("email", email).execute()
+    if result.data:
+        return HRState(**result.data[0]["state"])
+    return None
+
+def save_project_state(email: str, state: ProjectState):
+    supabase.table("project_states").upsert({
+        "email": email,
+        "state": state.dict()
+    }).execute()
+    
+    
+    
+def get_evaluation_state(email: str) -> Optional[EvaluationState]:
+    result = supabase.table("evaluation_states").select("state").eq("email", email).execute()
+    if result.data:
+        return HRState(**result.data[0]["state"])
+    return None
+
+def save_evaluation_state(email: str, state: EvaluationState):
+    supabase.table("evaluation_states").upsert({
         "email": email,
         "state": state.dict()
     }).execute()
