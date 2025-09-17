@@ -2,7 +2,7 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel
 
 class ProjectState(BaseModel):
-    section_name: str = "intro"
+    section_name: str = "interviewer_intro"
     current_project_index: int = -1
 
     in_project_qa: bool = False

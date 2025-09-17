@@ -3,8 +3,7 @@
 # -----------------------------
 from INTERVIEW.HR.state import HRState
 from INTERVIEW.HR.hr_graph import hr_graph
-from INTERVIEW.Project import project_graph
-from app.db import save_hr_state, get_hr_state, get_hr_resume, get_jd
+from app.db import save_hr_state, get_hr_state, get_hr_resume, get_jd , get_project_state , save_project_state
 from typing import Dict
 
 
@@ -57,37 +56,44 @@ def process_hr_query(email: str, user_input: str) -> str:
     return new_state.dict().get("response")
 
 
-from INTERVIEW.Project.project_graph import Project_graph # assuming you have a project graph
+
+from INTERVIEW.Project.project_graph import Project_graph
+from INTERVIEW.Project.state import ProjectState
 
 def process_project_query(email: str, user_input: str) -> Dict:
     """
     Process user input for candidate projects.
-    - Retrieve HRState
+    - Retrieve ProjectState
     - Iterate over projects
     - Call project.invoke with state + index
     - Save updated state
     - Return response
     """
-    state = get_hr_state(email)
+    state = get_project_state(email)
+
     if not state:
-        raise ValueError(f"No HRState found for {email}")
+        state = ProjectState()
+        save_project_state(email, state)
+
+
+    if not state:
+        raise ValueError(f"No ProjectState found for {email}")
 
     # Add user input into state
     state_dict = state.dict()
     state_dict["user_input"] = user_input
 
-    # Iterate over projects
-    responses = []
+
     projects = state.resume_info.get("projects", []) if state.resume_info else []
     
     project = Project_graph()
     new_state = project.invoke(state_dict)
 
     # Update state with project-specific changes
-    state = HRState(**new_state)
+    state = ProjectState(**new_state)
 
     # Save final state
-    save_hr_state(email, state)
+    save_project_state(email, state)
 
     return {
         "responses": responses
