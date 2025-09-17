@@ -133,13 +133,14 @@ def process_tech_query(email: str, user_input: str) -> str:
         jd_info = get_jd(email)
         if jd_info:
             state.job_info = jd_info
+            state.company_name = jd_info.get('company','') # Fixed: Populates company name
         print('JD Acquired')
     
     state.questions_per_topic = 2                # baseline per topic (e.g., 2)
     state.max_questions_per_topic = 5  
 
     # Step 5: Pass user input into state for Tech graph
-    state_dict = state.dict()
+    state_dict = state.model_dump() # Fixed: Use model_dump for Pydantic
     state_dict["user_input"] = user_input
     print('Passed User Input')
 
