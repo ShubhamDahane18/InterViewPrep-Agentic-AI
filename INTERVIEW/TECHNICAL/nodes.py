@@ -1,7 +1,7 @@
-from state import TechRoundState
-from io_utils import get_user_response, present_to_user
-from schema import QAEntry
-from config import llm
+from INTERVIEW.TECHNICAL.state import TechRoundState
+from INTERVIEW.TECHNICAL.io_utils import get_user_response, present_to_user
+from INTERVIEW.TECHNICAL.schema import QAEntry
+from INTERVIEW.TECHNICAL.config import llm
 import random
 
 def maybe_llm_follow_up(question: str, answer: str, round_type: str, state: dict, llm) -> str | None:
