@@ -32,7 +32,7 @@ def save_resume(state: ResumeAgentState) -> dict:
     response = supabase.table("resumes").upsert(data).execute()
     return resume
 
-def get_resume(email: str) -> dict | None:
+def get_resume(email: str) -> Optional[ResumeAgentState]:
     """Fetch resume by email."""
     response = supabase.table("resumes").select("*").eq("email", email).execute()
     if response.data:
@@ -75,9 +75,7 @@ def get_jd(email: str) -> Optional[Dict]:
 from INTERVIEW.HR.state import HRState
 from typing import List, Optional , Dict
 
-# -----------------------------
-# Helpers
-# -----------------------------
+
 def get_hr_state(email: str) -> Optional[HRState]:
     result = supabase.table("hr_states").select("state").eq("email", email).execute()
     if result.data:
@@ -88,13 +86,10 @@ def get_hr_state(email: str) -> Optional[HRState]:
 def save_hr_state(email: str, state: HRState):
     supabase.table("hr_states").upsert({
         "email": email,
-        "state": state.dict()
+        "state": state.model_dump()
     }).execute()
     
-# -----------------------------
-# Helpers
-# -----------------------------
-    
+
 def get_tech_state(email: str) -> Optional[TechRoundState]:
     result = supabase.table("technical_states").select("state").eq("email", email).execute()
     if result.data:
@@ -104,7 +99,7 @@ def get_tech_state(email: str) -> Optional[TechRoundState]:
 def save_tech_state(email: str, state: TechRoundState):
     supabase.table("technical_states").upsert({
         "email": email,
-        "state": state.dict()
+        "state": state.model_dump()
     }).execute()
     
     
@@ -117,9 +112,8 @@ def get_project_state(email: str) -> Optional[ProjectState]:
 def save_project_state(email: str, state: ProjectState):
     supabase.table("project_states").upsert({
         "email": email,
-        "state": state.dict()
+        "state": state.model_dump()
     }).execute()
-    
     
     
 def get_evaluation_state(email: str) -> Optional[EvaluationState]:
@@ -131,5 +125,5 @@ def get_evaluation_state(email: str) -> Optional[EvaluationState]:
 def save_evaluation_state(email: str, state: EvaluationState):
     supabase.table("evaluation_states").upsert({
         "email": email,
-        "state": state.dict()
+        "state": state.model_dump()
     }).execute()
