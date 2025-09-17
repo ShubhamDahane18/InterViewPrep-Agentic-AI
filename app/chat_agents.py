@@ -121,11 +121,11 @@ def process_tech_query(email: str, user_input: str) -> str:
         save_tech_state(email, state)
 
     # Step 3: Attach resume_info if missing
-    if not state.skills:
+    if not state["skills"]:
         resume_info = get_tech_resume(email)
         if resume_info:
             state.candidate_name = resume_info['name']
-            state.skills = resume_info['skills']
+            state["skills"] = resume_info['skills']
         print("Skills added")
 
     # Step 4: Attach jd_info if missing (if job_id provided)

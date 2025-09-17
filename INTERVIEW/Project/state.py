@@ -15,4 +15,8 @@ class ProjectState(BaseModel):
     user_input: Optional[str] = None
     response: Optional[str] = None
 
+    # Section-wise Q&A
     questions_answers: Dict[str, List[Dict[str, Optional[str]]]] = {}
+
+    # All projects (list of project dictionaries)
+    projects: List[Dict[str, Optional[str]]] = []

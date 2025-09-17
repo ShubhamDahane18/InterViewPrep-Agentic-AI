@@ -30,7 +30,6 @@ Your job is to:
     ("human", """
 Current section: {section_name}
 Current project index: {project_index}
-Total projects: {total_projects}
 User said: {user_input}
 Enforce limit: {enforce_limit}
 """)
@@ -57,10 +56,9 @@ from langgraph.types import Command
 from typing import Literal
 from langgraph.graph import END
 from INTERVIEW.util import load_llm
-from INTERVIEW.Project.state import ProjectState  # <-- your project state model
+from INTERVIEW.Project.state import ProjectState
 
 def get_project_intent_node(state: ProjectState) -> Command[Literal["project_round", END]]:
-    # 1. Enforce limit if too many QAs in this project
     enforce_limit = len(state.questions_answers) >= 10
 
     # 2. Run intent classifier
@@ -69,7 +67,6 @@ def get_project_intent_node(state: ProjectState) -> Command[Literal["project_rou
     intent: ProjectIntentSchema = intent_chain.invoke({
         "section_name": state.section_name,
         "project_index": state.current_project_index,
-        "total_projects": len(state.resume_project_info or []),
         "user_input": state.user_input,
         "enforce_limit": enforce_limit
     })

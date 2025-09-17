@@ -40,14 +40,12 @@ def ask_user_next_project_node(state: ProjectState) -> ProjectState:
     current_project = state.resume_project_info[state.current_project_index]
     project_name = current_project["name"]
 
-    qas = []
-    if state.project_contexts and len(state.project_contexts) > state.current_project_index:
-        qas = state.project_contexts[state.current_project_index].get("qa", [])
+
 
     # Generate interviewer response
     response = chain.invoke({
         "project_name": project_name,
-        "questions_answers": format_prev_qas(qas)
+        "questions_answers": format_prev_qas(state.questions_answers[state.current_project_index])
     })
 
     # Mark that next step is → classify intent
