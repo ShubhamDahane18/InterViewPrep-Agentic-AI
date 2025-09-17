@@ -10,17 +10,17 @@ class ExtractJobInfo(TypedDict):
     required_skills: List[str]
 
 class TechRoundState(TypedDict):
-    candidate_name : str
-    company_name: str
-    user_input: str
-    response: str 
-    core_subjects: List[str]                   # e.g., ["OS", "DS", "DBMS"]
-    skills: Dict[str, List[str]]               # e.g., {"Frontend": ["HTML", "CSS"], "Backend": ["Python", "SQL"]}
-    core_qa: List[Dict[str, str]]             # store Q&A for core questions
-    tech_qa: List[Dict[str, str]]             # store Q&A for technical questions
-    decision: Dict[str, str]                   # track decisions per round, e.g., {"core": "continue", "technical": "finish"}
-    qa_counts: Dict[str, int]                  # track number of questions asked per subject/skill
-    questions_per_topic: int                   # baseline per topic (e.g., 2)
-    max_questions_per_topic: int               # max questions per topic (e.g., 5)
-    followups_used: Dict[str, int]             # track follow-ups used per round
+    candidate_name : str=''
+    company_name: str=''
+    user_input: str=''
+    response: str =''
+    core_subjects: Optional[List[str]]                    # e.g., ["OS", "DS", "DBMS"]
+    skills:Optional[ Dict[str, List[str]]]               # e.g., {"Frontend": ["HTML", "CSS"], "Backend": ["Python", "SQL"]}
+    core_qa: Optional[List[Dict[str, str]]]             # store Q&A for core questions
+    tech_qa: Optional[List[Dict[str, str]]]             # store Q&A for technical questions
+    decision: Optional[Dict[str, str]]                   # track decisions per round, e.g., {"core": "continue", "technical": "finish"}
+    qa_counts:Optional[ Dict[str, int]]                  # track number of questions asked per subject/skill
+    questions_per_topic: Optional[int]                   # baseline per topic (e.g., 2)
+    max_questions_per_topic: Optional[int]               # max questions per topic (e.g., 5)
+    followups_used: Optional[Dict[str, int]]             # track follow-ups used per round
     job_info: Optional[ExtractJobInfo]         # Job description details
