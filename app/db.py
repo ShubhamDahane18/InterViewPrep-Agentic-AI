@@ -111,7 +111,7 @@ def get_tech_state(email: str) -> Optional[TechRoundState]:
 def save_tech_state(email: str, state: TechRoundState):
     supabase.table("technical_states").upsert({
         "email": email,
-        "state": state.model_dump()
+        "state": state
     }).execute()
     
     
