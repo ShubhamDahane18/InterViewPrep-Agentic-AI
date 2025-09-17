@@ -114,6 +114,7 @@ def process_tech_query(email: str, user_input: str) -> str:
 
     # Step 1: Fetch state
     state = get_tech_state(email)
+    print("Getting State")
     # Step 2: If no state exists, create new one
     if not state:
         state = TechRoundState()
@@ -125,12 +126,14 @@ def process_tech_query(email: str, user_input: str) -> str:
         if resume_info:
             state.candidate_name = resume_info['name']
             state.skills = resume_info['skills']
+        print("Skills added")
 
     # Step 4: Attach jd_info if missing (if job_id provided)
     if not state.job_info:
         jd_info = get_jd(email)
         if jd_info:
             state.job_info = jd_info
+        print('JD Acquired')
     
     state.questions_per_topic = 2                # baseline per topic (e.g., 2)
     state.max_questions_per_topic = 5  
@@ -138,6 +141,7 @@ def process_tech_query(email: str, user_input: str) -> str:
     # Step 5: Pass user input into state for Tech graph
     state_dict = state.dict()
     state_dict["user_input"] = user_input
+    print('Passed User Input')
 
     # Run through Tech graph/agent
     tech = build_graph()
