@@ -109,3 +109,21 @@ def project_agent(query: UserQuery):
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+from app.chat_agents import process_tech_query
+
+@app.post("/tech-agent")
+def tech_agent(query: UserQuery) -> str:  
+    """
+    Route for processing HR agent queries.
+    """
+    try:
+        result = process_tech_query(
+            email=query.email,
+            user_input=query.user_input
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+        
