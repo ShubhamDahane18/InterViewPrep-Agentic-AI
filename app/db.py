@@ -105,7 +105,7 @@ def save_hr_state(email: str, state: HRState):
 def get_tech_state(email: str) -> Optional[TechRoundState]:
     result = supabase.table("technical_states").select("state").eq("email", email).execute()
     if result.data:
-        return HRState(**result.data[0]["state"])
+        return TechRoundState(**result.data[0]["state"])
     return None
 
 def save_tech_state(email: str, state: TechRoundState):
@@ -118,7 +118,7 @@ def save_tech_state(email: str, state: TechRoundState):
 def get_project_state(email: str) -> Optional[ProjectState]:
     result = supabase.table("project_states").select("state").eq("email", email).execute()
     if result.data:
-        return HRState(**result.data[0]["state"])
+        return ProjectState(**result.data[0]["state"])
     return None
 
 def save_project_state(email: str, state: ProjectState):
@@ -131,7 +131,7 @@ def save_project_state(email: str, state: ProjectState):
 def get_evaluation_state(email: str) -> Optional[EvaluationState]:
     result = supabase.table("evaluation_states").select("state").eq("email", email).execute()
     if result.data:
-        return HRState(**result.data[0]["state"])
+        return EvaluationState(**result.data[0]["state"])
     return None
 
 def save_evaluation_state(email: str, state: EvaluationState):
