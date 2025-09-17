@@ -14,13 +14,13 @@ def maybe_llm_follow_up(question: str, answer: str, round_type: str, state: Tech
     if len(answer.split()) > 80 and random.random() < 0.5:
         structured_llm = llm.with_structured_output(QAEntry)
         follow_up = structured_llm.invoke(f"""
-You are a senior technical interviewer at {state['company_name']}.
-Candidate: {state['candidate_name']}
-Previous Q: {question}
-Candidate A: {answer}
+        You are a senior technical interviewer at {state['company_name']}.
+        Candidate: {state['candidate_name']}
+        Previous Q: {question}
+        Candidate A: {answer}
 
-Ask ONE concise follow-up question naturally, like a real interview. Do not give answers.
-""")
+        Ask ONE concise follow-up question naturally, like a real interview. Do not give answers.
+        """)
         return {"question": follow_up.question, "round_type": round_type}
     return None
 
@@ -59,10 +59,10 @@ def generate_qa_node(state: TechRoundState, round_type: str) -> dict:
     # Generate main question using LLM
     structured_llm = llm.with_structured_output(QAEntry)
     qa = structured_llm.invoke(f"""
-You are a professional technical interviewer at {company}.
-Generate ONE realistic, concise interview question about: {prompt_topic}.
-Address the candidate {state['candidate_name']} naturally.
-""")
+        You are a professional technical interviewer at {company}.
+        Generate ONE realistic, concise interview question about: {prompt_topic}.
+        Address the candidate {state['candidate_name']} naturally.
+        """)
 
     # Update state for frontend
     state["response"] = qa.question
