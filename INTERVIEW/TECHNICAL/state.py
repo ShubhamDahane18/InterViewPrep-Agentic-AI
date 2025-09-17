@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional , NotRequired
+from typing import List, Dict, Optional
 from typing_extensions import TypedDict
 
 class ExtractJobInfo(TypedDict):
