@@ -12,8 +12,8 @@ class ExtractJobInfo(TypedDict):
 class TechRoundState(TypedDict):
     candidate_name : str
     company_name: str
-    user_input: NotRequired[str] 
-    response: NotRequired[str] 
+    user_input: str
+    response: str 
     core_subjects: List[str]                   # e.g., ["OS", "DS", "DBMS"]
     skills: Dict[str, List[str]]               # e.g., {"Frontend": ["HTML", "CSS"], "Backend": ["Python", "SQL"]}
     core_qa: List[Dict[str, str]]             # store Q&A for core questions

@@ -11,7 +11,7 @@ def maybe_llm_follow_up(question: str, answer: str, round_type: str, state: Tech
     if used >= 2:
         return None
 
-    if len(answer.split()) > 80 and random.random() < 0.5:
+    if len(answer.split()) > 100 and random.random() < 0.5:
         structured_llm = llm.with_structured_output(QAEntry)
         follow_up = structured_llm.invoke(f"""
         You are a senior technical interviewer at {state['company_name']}.
