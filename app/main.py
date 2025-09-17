@@ -66,7 +66,7 @@ def save_jd(email: str, jd: ExtractJobInfo):
 
     # Upsert JD linked to the user email
     response = supabase.table("job_descriptions").upsert({
-        "user_email": email,
+        "email": email,
         "job_title": jd.job_title,
         "company": jd.company,
         "location": jd.location,
@@ -126,4 +126,3 @@ def tech_agent(query: UserQuery) -> str:
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-        
