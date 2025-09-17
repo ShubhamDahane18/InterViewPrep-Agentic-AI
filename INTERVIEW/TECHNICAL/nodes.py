@@ -4,7 +4,8 @@ from INTERVIEW.TECHNICAL.schema import QAEntry
 from INTERVIEW.TECHNICAL.config import llm
 import random
 
-def maybe_llm_follow_up(question: str, answer: str, round_type: str, state: dict, llm) -> str | None:
+
+def maybe_llm_follow_up(question: str, answer: str, round_type: str, state: TechRoundState, llm) -> str | None:
     """Use LLM to generate follow-up (capped at 2 per round)."""
     used = state.get("followups_used", {}).get(round_type, 0)
     if used >= 2:
@@ -23,6 +24,7 @@ def maybe_llm_follow_up(question: str, answer: str, round_type: str, state: dict
         return follow_up.question
 
     return None
+
 
 def generate_qa_node(state: TechRoundState, round_type: str) -> dict:
     """Generate one QA for core or tech round (JD-aligned for tech)."""
@@ -60,8 +62,13 @@ def generate_qa_node(state: TechRoundState, round_type: str) -> dict:
     Generate ONE new, unique interview question about the following {prompt_topic}.
     """)
 
+    # interviewer response
     present_to_user(f"\n[{round_type.capitalize()} - {topic}] Q: {qa.question}")
+    state["response"] = qa.question
+
+    # candidate answer
     answer = get_user_response("Your Answer: ")
+    state["user_input"] = answer
 
     updated_qa_list = qa_list + [{"question": qa.question, "answer": answer}]
     qa_counts[topic] = qa_counts.get(topic, 0) + 1
@@ -69,32 +76,46 @@ def generate_qa_node(state: TechRoundState, round_type: str) -> dict:
     follow_up = maybe_llm_follow_up(qa.question, answer, round_type, state, llm)
     if follow_up:
         present_to_user(f"💬 Interviewer: {follow_up}")
+        state["response"] = follow_up
+
         extra = get_user_response("Your Answer: ")
+        state["user_input"] = extra
+
         updated_qa_list.append({"question": follow_up, "answer": extra})
         state["followups_used"][round_type] += 1
 
     return {"core_qa": updated_qa_list, "qa_counts": qa_counts} if round_type == "core" else {"tech_qa": updated_qa_list, "qa_counts": qa_counts}
 
+
 def core_decision_node(state: TechRoundState) -> dict:
     present_to_user("\n✅ Finished baseline core questions.")
     while True:
+        state["response"] = "Core decision menu"
         user_input = get_user_response("1) Continue core questions\n2) Move to Technical\nChoose (1/2): ").strip().lower()
+        state["user_input"] = user_input
+
         if user_input in {"1", "continue", "c"}:
             action = "continue"; break
         if user_input in {"2", "next", "n"}:
             action = "next"; break
         present_to_user("❌ Invalid input, please type 1 or 2.")
+
     state["decision"]["core"] = action
     return {"decision": state["decision"]}
+
 
 def tech_decision_node(state: TechRoundState) -> dict:
     present_to_user("\n✅ Finished baseline technical questions.")
     while True:
+        state["response"] = "Technical decision menu"
         user_input = get_user_response("1) Continue technical questions\n2) Finish Tech Round\nChoose (1/2): ").strip().lower()
+        state["user_input"] = user_input
+
         if user_input in {"1", "continue", "c"}:
             action = "continue"; break
         if user_input in {"2", "finish", "f", "n", "next"}:
             action = "finish"; break
         present_to_user("❌ Invalid input, please type 1 or 2.")
+
     state["decision"]["technical"] = action
     return {"decision": state["decision"]}

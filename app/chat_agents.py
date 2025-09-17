@@ -137,6 +137,7 @@ def process_tech_query(email: str, user_input: str) -> str:
 
     # Step 5: Pass user input into state for Tech graph
     state_dict = state.dict()
+    state_dict["user_input"] = user_input
 
     # Run through Tech graph/agent
     tech = build_graph()
