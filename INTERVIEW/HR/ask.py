@@ -11,7 +11,7 @@ Keep the tone professional but warm.
 """),
     ("human", """
 ### Context
-- Current Round: {round_name}
+- Current Round: {section_name}
 - Questions and Answers from this round:
 {questions_answers}
 """)
@@ -33,11 +33,9 @@ def ask_user_what_next_node(state: HRState) -> HRState:
 
     llm = load_llm()
     chain = ask_next_prompt | llm
-    state.response = chain.invoke({
-        "round_name": state.round_name,
-        "questions_answers": format_prev_qas(state.questions_answers.get(state.round_name, []))
+    response = chain.invoke({
+        "section_name": state.section_name,
+        "questions_answers": format_prev_qas(state.questions_answers.get(state.section_name, []))
     })
 
-    # Next step → classify user intent from their reply
-    state.get_user_intent = True
-    return state
+    return {'response':response ,'get_user_intent': True}
