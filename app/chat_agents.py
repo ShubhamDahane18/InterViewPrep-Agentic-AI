@@ -4,7 +4,7 @@
 from INTERVIEW.HR.state import HRState
 from INTERVIEW.TECHNICAL.state import TechRoundState
 from INTERVIEW.HR.hr_graph import hr_graph
-from app.db import save_hr_state, get_hr_state, get_hr_resume, get_jd , get_project_state , save_project_state , get_tech_state , save_tech_state
+from app.db import save_hr_state, get_hr_state, get_hr_resume, get_jd,get_tech_resume , get_project_state , save_project_state , get_tech_state , save_tech_state
 from typing import Dict
 
 
@@ -114,35 +114,35 @@ def process_tech_query(email: str, user_input: str) -> str:
 
     # Step 1: Fetch state
     state = get_tech_state(email)
-
     # Step 2: If no state exists, create new one
     if not state:
         state = TechRoundState()
         save_tech_state(email, state)
 
     # Step 3: Attach resume_info if missing
-    if not state.resume_info:
-        resume_info = get_tech_state(email)
+    if not state.skills:
+        resume_info = get_tech_resume(email)
         if resume_info:
-            state.resume_info = resume_info
+            state.candidate_name = resume_info['name']
+            state.skills = resume_info['skills']
 
     # Step 4: Attach jd_info if missing (if job_id provided)
-    if not state.jd_info:
+    if not state.job_info:
         jd_info = get_jd(email)
         if jd_info:
-            state.jd_info = jd_info
+            state.job_info = jd_info
     
-    state.limit = 5
+    state.questions_per_topic = 2                # baseline per topic (e.g., 2)
+    state.max_questions_per_topic = 5  
 
-    # Step 5: Pass user input into state for HR graph
+    # Step 5: Pass user input into state for Tech graph
     state_dict = state.dict()
-    state_dict["user_input"] = user_input
 
-    # Run through HR graph/agent
+    # Run through Tech graph/agent
     tech = build_graph()
     state_out = tech.invoke(state_dict)
 
-    # Convert back into HRState (preserves resume_info + jd_info)
+    # Convert back into TechState (preserves resume_info + jd_info)
     state = TechRoundState(**state_out)
 
     # Step 6: Save updated state

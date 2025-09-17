@@ -10,6 +10,7 @@ class ExtractJobInfo(TypedDict):
     required_skills: List[str]
 
 class TechRoundState(TypedDict):
+    candidate_name : str
     company_name: str
     core_subjects: List[str]                   # e.g., ["OS", "DS", "DBMS"]
     skills: Dict[str, List[str]]               # e.g., {"Frontend": ["HTML", "CSS"], "Backend": ["Python", "SQL"]}

@@ -56,6 +56,18 @@ def get_hr_resume(email: str) -> Optional[Dict]:
 
     return resume_resp.data[0]  # { "name": ..., "experience": [...], "extracurriculars": [...] }
 
+def get_tech_resume(email:str)->Optional[Dict]:
+    "Fetch candidate resume details and return as dict for TechState"
+    resume_resp = (
+        supabase.table('resumes')
+        .select('name','skills')
+        .eq('email',email)
+        .execute()
+    )
+    if not resume_resp.data:
+        return None
+
+    return resume_resp.data[0]  # { "name": ..., "skills": [...] }
 
 def get_jd(email: str) -> Optional[Dict]:
     """Fetch job description details and return as dict for HRState.jd_info."""
