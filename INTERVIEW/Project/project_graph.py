@@ -14,12 +14,12 @@ def Project_graph():
     workflow = StateGraph(ProjectState)
 
     workflow.add_node("router" , router_node)
-    workflow.add_node("hr_round", project_round_node)
+    workflow.add_node("project_round", project_round_node)
     workflow.add_node("ask_user_what_next", ask_user_next_project_node)
     workflow.add_node("get_user_intent", get_project_intent_node)
 
     workflow.add_edge(START , "router")
-    workflow.add_edge("hr_round", END)
+    workflow.add_edge("project_round", END)
     workflow.add_edge("ask_user_what_next", END)
     workflow.add_edge("get_user_intent", END)
 

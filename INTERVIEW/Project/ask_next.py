@@ -12,6 +12,7 @@ Keep the tone professional but warm.
 """),
     ("human", """
 ### Context
+- User Name: {user_name}
 - Project Name: {project_name}
 - Questions and Answers from this project:
 {questions_answers}
@@ -37,13 +38,14 @@ def ask_user_next_project_node(state: ProjectState) -> ProjectState:
     chain = ask_next_project_prompt | llm
 
     # Get QAs for the current project
-    current_project = state.resume_project_info[state.current_project_index]
+    current_project = state.projects[state.current_project_index]
     project_name = current_project["name"]
 
 
 
     # Generate interviewer response
     response = chain.invoke({
+        "user_name": state.user_name,
         "project_name": project_name,
         "questions_answers": format_prev_qas(state.questions_answers[state.current_project_index])
     })

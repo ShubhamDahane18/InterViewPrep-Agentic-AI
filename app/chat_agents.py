@@ -4,7 +4,7 @@
 from INTERVIEW.HR.state import HRState
 from INTERVIEW.TECHNICAL.state import TechRoundState
 from INTERVIEW.HR.hr_graph import hr_graph
-from app.db import save_hr_state, get_hr_state, get_hr_resume, get_jd,get_tech_resume , get_project_state , save_project_state , get_tech_state , save_tech_state
+from app.db import save_hr_state, get_hr_state, get_hr_resume, get_jd,get_tech_resume , get_project_state , save_project_state , get_tech_state , save_tech_state , get_resume
 from typing import Dict
 
 
@@ -65,40 +65,52 @@ def process_project_query(email: str, user_input: str) -> Dict:
     """
     Process user input for candidate projects.
     - Retrieve ProjectState
-    - Iterate over projects
-    - Call project.invoke with state + index
+    - Attach projects from resume
+    - Call project.invoke with state
     - Save updated state
     - Return response
     """
     state = get_project_state(email)
 
     if not state:
+        # Initialize fresh state
         state = ProjectState()
         save_project_state(email, state)
 
-
+    # If still None, hard fail
     if not state:
         raise ValueError(f"No ProjectState found for {email}")
 
-    # Add user input into state
+    # Load resume from DB
+    resume = get_resume(email)
+
+    if not state.jd_info:
+        jd_info = get_jd(email)
+        if jd_info:
+            state.jd_info = jd_info
+
+    # Update state dict with latest input + projects from resume
     state_dict = state.dict()
     state_dict["user_input"] = user_input
 
+    if resume and "projects" in resume:
+        state_dict["projects"] = resume["projects"]   # ✅ inject projects from resume
 
-    projects = state.resume_info.get("projects", []) if state.resume_info else []
-    
+    if resume and "name" in resume:
+        state_dict["user_name"] = resume["name"]   # ✅ inject name from resume
+
+
+    # Call project graph
     project = Project_graph()
     new_state = project.invoke(state_dict)
 
-    # Update state with project-specific changes
+    # Convert back into Pydantic model
     state = ProjectState(**new_state)
 
-    # Save final state
+    # Save updated state
     save_project_state(email, state)
 
-    return {
-        "responses": state.model_dump().get('response')
-    }
+    return state.model_dump().get("response")
     
 
 from INTERVIEW.TECHNICAL.graph import build_graph 

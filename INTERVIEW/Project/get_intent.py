@@ -14,12 +14,15 @@ Your job is to:
   - If candidate says they are ready → section_name="project_loop" and delta=1.
   - Otherwise → stay in "interviewer_intro" and delta=0.
 - If current section is "project_loop":
-  - If candidate says "next" → move to the next project and delta=1.
+  - If candidate says "next":
+      - If is_last_project=true → move to "end" and delta=1.  
+      - Otherwise → stay in "project_loop" and delta=1 (go to next project).  
   - If candidate says "repeat" → stay in "project_loop" and delta=0.
-  - If last project is done → move to "end" and delta=1.
+  - If enforce_limit=true:
+      - If is_last_project=true → move to "end" and delta=1.
+      - Otherwise → stay in "project_loop" and delta=1.
 - If current section is "end":
   - Always stay in "end" and delta=0.
-- If enforce_limit=true → ALWAYS set delta=1 regardless of user input.
 - Never skip a project or section.  
 
 ### Output Schema:
@@ -30,6 +33,7 @@ Your job is to:
     ("human", """
 Current section: {section_name}
 Current project index: {project_index}
+Is last project: {is_last_project}
 User said: {user_input}
 Enforce limit: {enforce_limit}
 """)
@@ -60,6 +64,12 @@ from INTERVIEW.Project.state import ProjectState
 
 def get_project_intent_node(state: ProjectState) -> Command[Literal["project_round", END]]:
     enforce_limit = len(state.questions_answers) >= 10
+    total_projects = len(state.projects) if state.projects else 0
+    is_last_project = (
+        state.current_project_index >= (total_projects - 1)
+        if total_projects > 0
+        else True
+    )
 
     # 2. Run intent classifier
     llm = load_llm()
@@ -67,6 +77,7 @@ def get_project_intent_node(state: ProjectState) -> Command[Literal["project_rou
     intent: ProjectIntentSchema = intent_chain.invoke({
         "section_name": state.section_name,
         "project_index": state.current_project_index,
+        "is_last_project": is_last_project,
         "user_input": state.user_input,
         "enforce_limit": enforce_limit
     })
@@ -77,7 +88,8 @@ def get_project_intent_node(state: ProjectState) -> Command[Literal["project_rou
             goto=END,
             update={
                 "section_name": intent.section_name,
-                "response": intent.response
+                "response": intent.response,
+                "current_project_index": state.current_project_index + intent.delta
             }
         )
 
@@ -86,6 +98,7 @@ def get_project_intent_node(state: ProjectState) -> Command[Literal["project_rou
         goto="project_round",
         update={
             "section_name": intent.section_name,
-            "response": intent.response
+            "response": intent.response,
+            "current_project_index": state.current_project_index + intent.delta
         }
     )
