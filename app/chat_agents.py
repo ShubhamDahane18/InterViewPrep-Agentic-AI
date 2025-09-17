@@ -2,8 +2,9 @@
 # Core Function
 # -----------------------------
 from INTERVIEW.HR.state import HRState
+from INTERVIEW.TECHNICAL.state import TechRoundState
 from INTERVIEW.HR.hr_graph import hr_graph
-from app.db import save_hr_state, get_hr_state, get_hr_resume, get_jd , get_project_state , save_project_state
+from app.db import save_hr_state, get_hr_state, get_hr_resume, get_jd , get_project_state , save_project_state , get_tech_state , save_tech_state
 from typing import Dict
 
 
@@ -47,13 +48,13 @@ def process_hr_query(email: str, user_input: str) -> str:
     state_out = hr.invoke(state_dict)
 
     # Convert back into HRState (preserves resume_info + jd_info)
-    new_state = HRState(**state_out)
+    state = HRState(**state_out)
 
     # Step 6: Save updated state
-    save_hr_state(email, new_state)
+    save_hr_state(email, state)
 
     # Step 7: Return
-    return new_state.dict().get("response")
+    return state.model_dump().get("response")
 
 
 
@@ -96,9 +97,12 @@ def process_project_query(email: str, user_input: str) -> Dict:
     save_project_state(email, state)
 
     return {
-        "responses": responses
+        "responses": state.model_dump().get('response')
     }
     
+
+from INTERVIEW.TECHNICAL.graph import build_graph 
+
 def process_tech_query(email: str, user_input: str) -> str:
     """
     Process a user input for the HR agent:
@@ -109,16 +113,16 @@ def process_tech_query(email: str, user_input: str) -> str:
     """
 
     # Step 1: Fetch state
-    state = get_hr_state(email)
+    state = get_tech_state(email)
 
     # Step 2: If no state exists, create new one
     if not state:
-        state = HRState()
-        save_hr_state(email, state)
+        state = TechRoundState()
+        save_tech_state(email, state)
 
     # Step 3: Attach resume_info if missing
     if not state.resume_info:
-        resume_info = get_hr_resume(email)
+        resume_info = get_tech_state(email)
         if resume_info:
             state.resume_info = resume_info
 
@@ -135,14 +139,14 @@ def process_tech_query(email: str, user_input: str) -> str:
     state_dict["user_input"] = user_input
 
     # Run through HR graph/agent
-    hr = hr_graph()
-    state_out = hr.invoke(state_dict)
+    tech = build_graph()
+    state_out = tech.invoke(state_dict)
 
     # Convert back into HRState (preserves resume_info + jd_info)
-    new_state = HRState(**state_out)
+    state = TechRoundState(**state_out)
 
     # Step 6: Save updated state
-    save_hr_state(email, new_state)
+    save_tech_state(email, state)
 
     # Step 7: Return
-    return new_state.dict().get("response")
+    return state.model_dump().get("response")
