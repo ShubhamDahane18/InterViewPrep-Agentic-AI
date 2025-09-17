@@ -66,7 +66,7 @@ def save_jd(email: str, jd: ExtractJobInfo):
 
     # Upsert JD linked to the user email
     response = supabase.table("job_descriptions").upsert({
-        "user_email": email,
+        "email": email,
         "job_title": jd.job_title,
         "company": jd.company,
         "location": jd.location,
@@ -106,6 +106,23 @@ from app.chat_agents import process_project_query
 def project_agent(query: UserQuery):
     try:
         result = process_project_query(query.email, query.user_input)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+from app.chat_agents import process_tech_query
+
+@app.post("/tech-agent")
+def tech_agent(query: UserQuery) -> str:  
+    """
+    Route for processing HR agent queries.
+    """
+    try:
+        result = process_tech_query(
+            email=query.email,
+            user_input=query.user_input
+        )
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
