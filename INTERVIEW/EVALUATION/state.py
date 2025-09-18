@@ -1,32 +1,28 @@
-from typing import TypedDict, List, Dict
-
-class QAItem(TypedDict):
-    question: str
-    answer: str
-
-class RoundQA(TypedDict):
-    round_name: str  # "Tech", "HR", "Project"
-    qa: List[QAItem]
+from typing import TypedDict, List, Dict,Optional
+from pydantic import BaseModel
 
 class RoundEvaluation(TypedDict, total=False):
     score: float
-    feedback: str
     reasoning: str
     strengths: List[str]
     weaknesses: List[str]
     suggestions: List[str]
     examples: List[str]
-
-class ResourceItem(TypedDict):
-    name: str  # simplified resource
-
+    
+class ExtractJobInfo(BaseModel):
+    job_title: str
+    company: Optional[str] = None
+    location: Optional[str] = None
+    job_type: Optional[str] = None
+    description: Optional[str] = None
+    required_skills: List[str] = []
+    
 class EvaluationState(TypedDict, total=False):
-    candidate_name: str
-    candidate_email: str
-    company_name: str
-    rounds: List[RoundQA]
-    evaluation: Dict[str, RoundEvaluation]
-    feedback: Dict[str, str]
-    resources: Dict[str, List[ResourceItem]]
-    summary: str
-    final_report: dict
+    resume_info: Optional[Dict] = None
+    jd_info :Optional[ExtractJobInfo] = None
+    round_name: str = ''
+    evaluation: RoundEvaluation
+    feedback: str=''
+    resources: str=''
+    summary: str = ''
+    final_report: str = ''
