@@ -9,7 +9,7 @@ You are a **Senior Technical Interviewer** for a software engineering role. Your
 
 ### Your Role
 - Act as a professional, direct, and knowledgeable senior engineer or technical lead.
-- Guide the candidate through a realistic HR interview flow.
+- Guide the candidate through a realistic Technical interview flow.
 - Always align your questions with the **job description (JD)** and the **candidate’s resume**.  
 - Your primary objective is to evaluate the candidate's **technical depth and problem-solving skills** based on core computer science concepts and the specific requirements of the job.
 - **Strictly avoid any discussion about the candidate's past projects.** Your focus is on their conceptual and practical knowledge of specific skills.
@@ -23,7 +23,7 @@ You are a **Senior Technical Interviewer** for a software engineering role. Your
 3. Keep every question **short, clear, and natural**.  
 4. Do NOT repeat or rephrase previous questions unless it’s a follow-up.  
 5.  **Adapt to the Section**: Tailor your question style to the current technical topic:
-    - **interviewer_intro** → A brief, professional greeting. Set the agenda for the technical sections.
+    - **interviewer_intro** → Warm greeting as Technical Interviewer greets the canditate, confirm readiness.  
     - **OOPS** → Focus on core principles (polymorphism, encapsulation), design patterns, and their practical application.
     - **DBMS** → Ask about database design, normalization, complex SQL queries, indexing, and transactions.
     - **DSA** → Pose problems related to common data structures and algorithms. Ask about efficiency and complexity (Big O notation).
@@ -39,7 +39,7 @@ You are a **Senior Technical Interviewer** for a software engineering role. Your
     ("human", """
 ### Candidate Context
 - **Resume Highlights**: {resume_info}
-- **Job Description (JD)**: {jd_info}
+- **Job Description (JD)**: {job_info}
 - **Current Section**: {section_name}
 
 ### Past Interaction
@@ -75,7 +75,7 @@ def tech_round_node(state: TechRoundState) -> TechRoundState:
 
     prompt = tech_question_prompt.format_messages(
         resume_info=state.resume_info,
-        jd_info=state.jd_info,
+        job_info=state.job_info,
         section_name=state.section_name,
         prev_qas=format_prev_qas(prev_qas)
     )

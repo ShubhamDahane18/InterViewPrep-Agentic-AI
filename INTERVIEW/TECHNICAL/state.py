@@ -19,4 +19,5 @@ class TechRoundState(BaseModel):
     is_qa: bool = False
     skills: Optional[Dict[str, List[str]]] = None
     questions_answers: Dict[str, List[Dict[str, Optional[str]]]] = {}
+    resume_info: Optional[Dict] = None
     job_info: Optional[ExtractJobInfo] = None
