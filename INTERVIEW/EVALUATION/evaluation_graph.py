@@ -9,7 +9,7 @@ def build_evaluation_graph():
     workflow.add_node("final_report", final_report_node)
 
     workflow.add_edge(START, "evaluation")
-    workflow.add_edge("evaluation", "sumary")
+    workflow.add_edge("evaluation", "summary")
     workflow.add_edge("summary", "final_report")
     workflow.add_edge("final_report", END)
 
