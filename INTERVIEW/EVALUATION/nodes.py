@@ -105,20 +105,56 @@ def summary_node(state) -> dict:
 
 
 # --- Final Report Node ---
-def final_report_node(state: EvaluationState) -> EvaluationState:
-    candidate_info = {
-        "name": state.get("candidate_name", "N/A"),
-        "email": state.get("candidate_email", "N/A"),
-        "company": state.get("company_name", "N/A"),
-        "interview_date": str(date.today())
-    }
+final_report_prompt = ChatPromptTemplate.from_messages([
+    ("system", """
+You are an interviewer assistant. 
+Your job is to create a polished, professional final report for a candidate.
 
-    final_report = FinalReport(
-        candidate=candidate_info,
-        evaluation=state.get("evaluation", {}),
-        feedback=state.get("feedback", {}),
-        resources=state.get("resources", {}),
-        summary=state.get("summary", {})
-    )
-    state["final_report"] = final_report.dict()
-    return state
+Instructions:
+- Use the candidate's name, the evaluation results, and the summary.
+- Format the report with clear headings and sections.
+- Include:
+    1. Candidate Name
+    2. Round Name
+    3. Evaluation Highlights
+    4. Summary
+- Tone: professional, constructive, and encouraging.
+- Use proper formatting for readability (headings, bullet points where applicable).
+- Return only the report text.
+"""),
+    ("human", """
+Candidate Name: {candidate_name}
+Round: {round_name}
+
+Evaluation:
+{evaluation}
+
+Summary:
+{summary}
+""")
+])
+
+# -------------------------------
+# Final report node
+# -------------------------------
+def final_report_node(state) -> dict:
+    """
+    Generate a polished final report for the candidate including evaluation, summary, and candidate name.
+    """
+    llm = load_llm()
+
+    chain = final_report_prompt | llm | StrOutputParser()
+
+    candidate_name = ""
+    if state.get("resume_info"):
+        candidate_name = state["resume_info"].get("name")
+
+    result = chain.invoke({
+        "candidate_name": candidate_name,
+        "round_name": state.get("round_name", ""),
+        "evaluation": state.get("evaluation"),
+        "summary": state.get("summary"),
+    })
+
+    
+    return result 
