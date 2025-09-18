@@ -64,7 +64,7 @@ def format_prev_qas(qas: list[dict]) -> str:
         return "None"
     return "\n".join(
         f"Q: {qa['question']}\nA: {qa['answer'] or '(not answered yet)'}"
-        for qa in qas
+        for qa in reversed(qas)  # latest first
     )
 
 def tech_round_node(state: TechRoundState) -> TechRoundState:

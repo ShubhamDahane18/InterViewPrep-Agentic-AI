@@ -127,3 +127,41 @@ def tech_agent(query: UserQuery) -> str:
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+from app.db import get_hr_state, get_tech_state, get_project_state
+from INTERVIEW.HR.evaluation import evaluate_hr_rounds
+from INTERVIEW.Tech.evaluation import evaluate_tech_rounds
+from INTERVIEW.Project.evaluation import evaluate_project_rounds
+
+
+@app.post("/hr_evaluation/{email}")
+def evaluate_hr(email: str) -> Dict:
+    """Evaluate all HR rounds for a candidate."""
+    state = get_hr_state(email)
+    if not state:
+        raise HTTPException(status_code=404, detail="No HRState found for this email")
+
+    result = evaluate_hr_rounds(state.questions_answers)
+    return {"type": "HR Evaluation", "result": result}
+
+
+@app.post("/tech_evaluation/{email}")
+def evaluate_tech(email: str) -> Dict:
+    """Evaluate all Technical rounds for a candidate."""
+    state = get_tech_state(email)
+    if not state:
+        raise HTTPException(status_code=404, detail="No TechState found for this email")
+
+    result = evaluate_tech_rounds(state.questions_answers)
+    return {"type": "Tech Evaluation", "result": result}
+
+
+@app.post("/project_evaluation/{email}")
+def evaluate_project(email: str) -> Dict:
+    """Evaluate all Project rounds for a candidate."""
+    state = get_project_state(email)
+    if not state:
+        raise HTTPException(status_code=404, detail="No ProjectState found for this email")
+
+    result = evaluate_project_rounds(state.questions_answers, state.projects)
+    return {"type": "Project Evaluation", "result": result}
