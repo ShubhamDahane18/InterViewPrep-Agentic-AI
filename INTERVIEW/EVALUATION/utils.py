@@ -1,35 +1,16 @@
-import json
-from datetime import datetime
+from typing import Dict, List, Optional
 
-def present_to_user(msg: str):
-    print(msg)
-
-def clean_json(raw: str) -> dict:
-    cleaned = raw.strip()
-    if cleaned.startswith("```"):
-        cleaned = cleaned.split("```")[1]
-        if cleaned.startswith("json"):
-            cleaned = cleaned[len("json"):].strip()
-        cleaned = cleaned.strip("`").strip()
-    try:
-        return json.loads(cleaned)
-    except Exception as e:
-        print(f"⚠️ JSON parsing failed: {e}")
-        return {}
-    
-def export_state(state: dict, folder: str = "logs") -> str:
+def qa_to_str(questions_answers: Dict[str, List[Dict[str, Optional[str]]]]) -> str:
     """
-    Save interview state to a JSON file.
-    Returns the file path.
+    Convert a dict of section -> list of {question, answer} 
+    into a human-readable plain string.
     """
-    import os
-    os.makedirs(folder, exist_ok=True)
-
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    company = state.get("company_name", "UnknownCompany").replace(" ", "_")
-    filename = f"{folder}/interview_{company}_{timestamp}.json"
-
-    with open(filename, "w", encoding="utf-8") as f:
-        json.dump(state, f, indent=2, ensure_ascii=False)
-
-    return filename
+    lines = []
+    for section, qa_list in questions_answers.items():
+        lines.append(f"Section: {section}")
+        for idx, qa in enumerate(qa_list, start=1):
+            question = qa.get("question") or ""
+            answer = qa.get("answer") or ""
+            lines.append(f"  Q{idx}: {question}")
+            lines.append(f"  A{idx}: {answer}")
+    return "\n".join(lines)

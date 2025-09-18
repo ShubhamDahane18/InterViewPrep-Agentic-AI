@@ -1,48 +1,63 @@
-from config import evaluator_llm , llm ,resource_llm
+from INTERVIEW.util import load_llm
+from INTERVIEW.EVALUATION.utils import qa_to_str
 from state import EvaluationState
 from schema import RoundEvaluation, Summary, FinalReport, ResourceItem
 from datetime import date
+from langchain.prompts import ChatPromptTemplate
 
+
+evaluation_prompt = ChatPromptTemplate.from_messages([
+    ("system", """
+You are an experienced interviewer evaluating a candidate's performance in an interview round.
+
+Your job is to:
+1. Analyze the candidate's Q&A transcript for the given round.
+2. Provide a fair and constructive evaluation.
+3. Return a structured output strictly following the RoundEvaluation schema.
+
+### Rules:
+- score → A number between 0 and 10 (0 = very poor, 10 = excellent).
+- reasoning → Brief explanation of why this score was assigned.
+- strengths → Key areas where the candidate performed well (list).
+- weaknesses → Areas where the candidate struggled or gave incomplete answers (list).
+- suggestions → Clear, actionable steps for improvement (list).
+- examples → Specific excerpts or references from candidate responses that justify the evaluation (list).
+- Do not invent details outside the transcript.
+- Be objective, concise, and constructive.
+
+### Output Schema: RoundEvaluation
+- score: float (0–10)
+- reasoning: str
+- strengths: List[str]
+- weaknesses: List[str]
+- suggestions: List[str]
+- examples: List[str]
+"""),
+    ("human", """
+Round name: {round_name}
+Q&A Transcript:
+{qa_text}
+""")
+])
 
 # --- Evaluation Node ---
 def evaluation_node(state: EvaluationState) -> EvaluationState:
-    evaluations = {}
 
-    for round_data in state.get("rounds", []):
-        round_name = round_data["round_name"].lower()
-        qa_pairs = round_data["qa"]
-        qa_text = "\n".join([f"Q: {qa['question']}\nA: {qa['answer']}" for qa in qa_pairs])
+    # LLM with structured output
+    llm = load_llm()
+    llm_ws = llm.with_structured_output(RoundEvaluation)
 
-        structured_eval_llm = evaluator_llm.with_structured_output(RoundEvaluation)
-        try:
-            eval_result = structured_eval_llm.invoke(
-                f"Evaluate the following {round_name} interview responses:\n\n{qa_text}\n\n"
-                "Provide a score (0–10), feedback, reasoning, strengths, weaknesses, suggestions, and examples."
-            )
-            evaluations[round_name] = eval_result.dict()
-        except Exception as e:
-            print(f"⚠️ Evaluation for {round_name} failed: {e}")
-            evaluations[round_name] = {
-                "score": 0,
-                "feedback": "No evaluation available.",
-                "strengths": [],
-                "weaknesses": [],
-                "suggestions": [],
-                "examples": []
-            }
+    # Chain
+    chain = evaluation_prompt | llm_ws
 
-    state["evaluation"] = evaluations
-    return state
+    # Invoke
+    result: RoundEvaluation = chain.invoke({
+        "round_name": state.get("round_name", ""),
+        "qa_str": qa_to_str(state["questions_answers"]),
+    })
 
-
-# --- Feedback Node ---
-def feedback_node(state: EvaluationState) -> EvaluationState:
-    feedbacks = {}
-    for round_name, eval_data in state.get("evaluation", {}).items():
-        feedbacks[round_name] = llm.invoke(
-            f"Convert the following evaluation into constructive interview feedback for the candidate:\n\n{eval_data}"
-        ).content
-    state["feedback"] = feedbacks
+    # Update state
+    state["evaluation"] = result
     return state
 
 
