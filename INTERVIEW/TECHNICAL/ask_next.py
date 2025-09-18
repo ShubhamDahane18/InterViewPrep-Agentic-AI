@@ -40,3 +40,27 @@ def ask_user_what_next_node(state: TechRoundState) -> TechRoundState:
     })
 
     return {'response':response ,'get_user_intent': True}
+
+def format_prev_qas(qas: list[dict]) -> str:
+    if not qas:
+        return "None"
+    return "\n".join(
+        f"Q: {qa['question']}\nA: {qa['answer'] or '(not answered yet)'}"
+        for qa in qas
+    )
+
+
+from INTERVIEW.util import load_llm
+from INTERVIEW.TECHNICAL.state import TechRoundState
+from langchain_core.output_parsers import StrOutputParser
+def ask_user_what_next_node(state: TechRoundState) -> TechRoundState:
+    """Use LLM to summarize and ask what candidate wants to do next."""
+
+    llm = load_llm()
+    chain = ask_next_prompt | llm | StrOutputParser()
+    response = chain.invoke({
+        "section_name": state.section_name,
+        "questions_answers": format_prev_qas(state.questions_answers.get(state.section_name, []))
+    })
+
+    return {'response':response ,'get_user_intent': True}

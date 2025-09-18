@@ -2,14 +2,14 @@ from langchain.prompts import ChatPromptTemplate
 
 intent_prompt = ChatPromptTemplate.from_messages([
     ("system", """
-You are an intent classifier for an HR interview flow. 
+You are an intent classifier for an Technical interview flow. 
 Your job is to:
 1. Detect if the candidate wants to REPEAT the current section or move to the NEXT section.  
 2. Handle the special "interviewer_intro" and "end" sections.  
 3. Return a structured output following the given schema.
 
 ### Rules:
-- The valid sequence of sections is: ["interviewer_intro", "OOPS", "DBMS", "DSA", "CN", "skills","end"].
+- The valid sequence of sections is: ["interviewer_intro", "Object Oriented Programming", "Database Management", "Data Structures & Algo", "Computer Networking", "skills","end"].
 - If current section is "interviewer_intro":
   - If candidate says they are ready → set section_name="OOPS".
   - If not ready → keep section_name="interviewer_intro" and in response politely ask them to say "ready" when they are prepared.
@@ -38,7 +38,7 @@ from pydantic import BaseModel, Field
 class IntentSchema(BaseModel):
     section_name: str = Field(
         ...,
-        description="The section the interview should continue with. Must be one of:['interviewer_intro', 'OOPS', 'DBMS', 'DSA', 'CN', 'skills','end']."
+        description="The section the interview should continue with. Must be one of:['interviewer_intro', 'Object Oriented Programming', 'Database Management', 'Data Structures & Algo', 'Computer Networking', 'skills','end']."
     )
     response: str = Field(
         ...,
