@@ -122,15 +122,7 @@ def get_project_state(email: str) -> Optional[ProjectState]:
     
     if result.data and len(result.data) > 0:
         state_dict = result.data[0].get("state")
-        if state_dict:
-            # Convert string fields to the correct types
-            if "current_project_index" in state_dict:
-                try:
-                    state_dict["current_project_index"] = int(state_dict["current_project_index"])
-                except (ValueError, TypeError):
-                    state_dict["current_project_index"] = -1  # default if conversion fails
-
-            return ProjectState(**state_dict)
+        return ProjectState(**state_dict)
     
     return None
 
@@ -138,9 +130,6 @@ def get_project_state(email: str) -> Optional[ProjectState]:
 def save_project_state(email: str, state: ProjectState):
     state_dict = state.model_dump()
     
-    # Convert only current_project_index to string
-    if "current_project_index" in state_dict:
-        state_dict["current_project_index"] = str(state_dict["current_project_index"])
     
     supabase.table("project_states").upsert({
         "email": email,
