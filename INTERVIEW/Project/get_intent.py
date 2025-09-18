@@ -66,7 +66,7 @@ def get_project_intent_node(state: ProjectState) -> Command[Literal["project_rou
     enforce_limit = len(state.questions_answers) >= 10
     total_projects = len(state.projects) if state.projects else 0
     is_last_project = (
-        state.current_project_index >= (total_projects - 1)
+        int(state.current_project_index) >= (total_projects - 1)
         if total_projects > 0
         else True
     )
@@ -76,7 +76,7 @@ def get_project_intent_node(state: ProjectState) -> Command[Literal["project_rou
     intent_chain = project_intent_prompt | llm.with_structured_output(ProjectIntentSchema)
     intent: ProjectIntentSchema = intent_chain.invoke({
         "section_name": state.section_name,
-        "project_index": state.current_project_index,
+        "project_index": int(state.current_project_index),
         "is_last_project": is_last_project,
         "user_input": state.user_input,
         "enforce_limit": enforce_limit
@@ -89,7 +89,7 @@ def get_project_intent_node(state: ProjectState) -> Command[Literal["project_rou
             update={
                 "section_name": intent.section_name,
                 "response": intent.response,
-                "current_project_index": state.current_project_index + intent.delta
+                "current_project_index": str(int(state.current_project_index) + intent.delta)
             }
         )
 
@@ -99,6 +99,6 @@ def get_project_intent_node(state: ProjectState) -> Command[Literal["project_rou
         update={
             "section_name": intent.section_name,
             "response": intent.response,
-            "current_project_index": state.current_project_index + intent.delta
+            "current_project_index": str(int(state.current_project_index)+ intent.delta)
         }
     )

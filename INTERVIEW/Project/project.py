@@ -81,16 +81,16 @@ def project_round_node(state: ProjectState) -> ProjectState:
     # Only fetch project details if we are in project_loop
     if state.section_name == "project_loop" and state.projects:
         if (
-            state.current_project_index is not None
-            and 0 <= state.current_project_index < len(state.projects)
+            int(state.current_project_index) is not None
+            and 0 <= int(state.current_project_index) < len(state.projects)
         ):
-            current_project = state.projects[state.current_project_index]
+            current_project = state.projects[int(state.current_project_index)]
             current_project = current_project.model_dump()
             project_name = current_project.get("name", "")
             project_time = current_project.get("time_period", "")
             project_tech_stack = current_project.get("tech_stack", "")
             project_features = current_project.get("features", "")
-            prev_qas = format_prev_qas(state.questions_answers.get(state.current_project_index, []))
+            prev_qas = format_prev_qas(state.questions_answers.get(int(state.current_project_index), []))
 
 
     prompt = project_question_prompt.format_messages(

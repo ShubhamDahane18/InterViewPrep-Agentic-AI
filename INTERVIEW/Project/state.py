@@ -9,7 +9,7 @@ class Project(BaseModel):
 
 class ProjectState(BaseModel):
     section_name: str = "interviewer_intro"
-    current_project_index: int = -1
+    current_project_index: str = '-1'
     limit:int = 5
 
     is_project_qa: bool = False

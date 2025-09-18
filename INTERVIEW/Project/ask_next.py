@@ -39,7 +39,7 @@ def ask_user_next_project_node(state: ProjectState) -> ProjectState:
     chain = ask_next_project_prompt | llm | StrOutputParser()
 
     # Get QAs for the current project
-    current_project = state.projects[state.current_project_index]
+    current_project = state.projects[int(state.current_project_index)]
     project_name = current_project["name"]
 
 
@@ -48,7 +48,7 @@ def ask_user_next_project_node(state: ProjectState) -> ProjectState:
     response = chain.invoke({
         "user_name": state.user_name,
         "project_name": project_name,
-        "questions_answers": format_prev_qas(state.questions_answers[state.current_project_index])
+        "questions_answers": format_prev_qas(state.questions_answers[int(state.current_project_index)])
     })
 
     # Mark that next step is → classify intent
