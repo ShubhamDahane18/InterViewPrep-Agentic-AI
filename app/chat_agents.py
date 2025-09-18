@@ -73,7 +73,7 @@ def process_project_query(email: str, user_input: str) -> Dict:
     if not state:
         # Initialize fresh state
         state = ProjectState()
-        save_project_state(email, state)
+        save_project_state(email, state.model_dump())
 
     # If still None, hard fail
     if not state:
@@ -100,15 +100,15 @@ def process_project_query(email: str, user_input: str) -> Dict:
 
     # Call project graph
     project = Project_graph()
-    new_state = project.invoke(state_dict)
+    state = project.invoke(state_dict)
 
     # Convert back into Pydantic model
-    state = ProjectState(**new_state)
+    # state = ProjectState(**new_state)
 
     # Save updated state
     save_project_state(email, state)
 
-    return state.model_dump().get("response")
+    return state.get("response")
     
 
 from INTERVIEW.TECHNICAL.graph import build_graph 

@@ -1,4 +1,4 @@
-# app.py
+# main.py
 from fastapi import FastAPI, UploadFile, File , HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import sys , os
@@ -126,3 +126,4 @@ def tech_agent(query: UserQuery) -> str:
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+

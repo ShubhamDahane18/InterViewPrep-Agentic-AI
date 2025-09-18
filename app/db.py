@@ -127,13 +127,13 @@ def get_project_state(email: str) -> Optional[ProjectState]:
     return None
 
 
-def save_project_state(email: str, state: ProjectState):
-    state_dict = state.model_dump()
+def save_project_state(email: str, state: Dict):
+    # state_dict = state.model_dump()
     
     
     supabase.table("project_states").upsert({
         "email": email,
-        "state": state_dict
+        "state": state
     }).execute()
 
     
