@@ -100,8 +100,7 @@ def summary_node(state) -> dict:
         "evaluation": state.get("evaluation"),
     })
 
-    state["summary"] = result
-    return state
+    return {'summary':result}
 
 
 # --- Final Report Node ---
@@ -157,4 +156,4 @@ def final_report_node(state) -> dict:
     })
 
     
-    return result 
+    return {'final_report':result}
