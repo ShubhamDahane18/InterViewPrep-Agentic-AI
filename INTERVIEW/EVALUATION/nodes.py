@@ -53,7 +53,7 @@ def evaluation_node(state: EvaluationState) -> EvaluationState:
     # Invoke
     result: RoundEvaluation = chain.invoke({
         "round_name": state.get("round_name", ""),
-        "qa_str": qa_to_str(state["questions_answers"]),
+        "qa_text": qa_to_str(state["questions_answers"]),
     })
 
     # Update state
