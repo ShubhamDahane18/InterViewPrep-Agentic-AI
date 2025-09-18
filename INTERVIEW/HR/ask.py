@@ -28,7 +28,7 @@ def format_prev_qas(qas: list[dict]) -> str:
 
 from INTERVIEW.util import load_llm
 from INTERVIEW.HR.state import HRState
-from langchain.output_parsers import StrOutputParser
+from langchain_core.output_parsers import StrOutputParser
 def ask_user_what_next_node(state: HRState) -> HRState:
     """Use LLM to summarize and ask what candidate wants to do next."""
 
