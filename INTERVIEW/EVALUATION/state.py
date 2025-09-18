@@ -23,6 +23,5 @@ class EvaluationState(TypedDict, total=False):
     jd_info :Optional[ExtractJobInfo] = None
     round_name: str = ''
     evaluation: RoundEvaluation
-    resources: str=''
     summary: str = ''
     final_report: str = ''

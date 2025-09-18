@@ -60,35 +60,47 @@ def evaluation_node(state: EvaluationState) -> EvaluationState:
     return {"evaluation":result.model_dump()}
 
 
-# --- Resource Node ---
-def resource_node(state: EvaluationState) -> EvaluationState:
-    resources = {}
-    for round_name, eval_data in state.get("evaluation", {}).items():
-        weaknesses = eval_data.get("weaknesses", [])
-        if weaknesses:
-            res_list = []
-            for w in weaknesses:
-                suggestion = resource_llm.invoke(
-                    f"Suggest one learning resource (book, course, or tutorial) to improve on this weakness:\n{w}"
-                ).content
-                res_list.append(ResourceItem(name=suggestion))
-            resources[round_name] = res_list
-    state["resources"] = resources
-    return state
-
-
 # --- Summary Node ---
-def summary_node(state: EvaluationState) -> EvaluationState:
-    all_strengths, all_weaknesses = [], []
-    for eval_data in state.get("evaluation", {}).values():
-        all_strengths.extend(eval_data.get("strengths", []))
-        all_weaknesses.extend(eval_data.get("weaknesses", []))
+summary_prompt = ChatPromptTemplate.from_messages([
+    ("system", """
+You are an interviewer assistant. 
+Create a concise, professional summary of the candidate's performance based on the evaluation and job description.
 
-    structured_summary_llm = evaluator_llm.with_structured_output(Summary)
-    summary = structured_summary_llm.invoke(
-        f"Summarize the candidate’s performance. Strengths: {all_strengths}. Weaknesses: {all_weaknesses}."
-    )
-    state["summary"] = summary.dict()
+Instructions:
+- Use the evaluation (score, reasoning, strengths, weaknesses, suggestions, examples) and JD.
+- Align feedback with the role requirements.
+- Be polite, constructive, and encouraging.
+- Keep it 3–5 sentences.
+- Return only the summary text (no extra formatting or JSON).
+"""),
+    ("human", """
+Round: {round_name}
+
+Job Description:
+{jd_info}
+
+Evaluation:
+{evaluation}
+""")
+])
+
+from langchain_core.output_parsers import StrOutputParser
+
+def summary_node(state) -> dict:
+    """
+    Generate a concise, professional summary of the candidate's performance
+    based on evaluation and JD, and update the state.
+    """
+    llm = load_llm()
+    chain = summary_prompt | llm | StrOutputParser()
+
+    result = chain.invoke({
+        "round_name": state.get("round_name", ""),
+        "jd_info": state.get("jd_info"),
+        "evaluation": state.get("evaluation"),
+    })
+
+    state["summary"] = result
     return state
 
 
