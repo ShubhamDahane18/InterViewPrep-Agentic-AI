@@ -136,11 +136,17 @@ def get_project_state(email: str) -> Optional[ProjectState]:
 
 
 def save_project_state(email: str, state: ProjectState):
+    state_dict = state.model_dump()
+    
+    # Convert only current_project_index to string
+    if "current_project_index" in state_dict:
+        state_dict["current_project_index"] = str(state_dict["current_project_index"])
+    
     supabase.table("project_states").upsert({
         "email": email,
-        "state": state.model_dump()
+        "state": state_dict
     }).execute()
-    
+
     
 def get_evaluation_state(email: str) -> Optional[EvaluationState]:
     result = supabase.table("evaluation_states").select("state").eq("email", email).execute()
