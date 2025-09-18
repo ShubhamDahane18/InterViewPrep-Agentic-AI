@@ -1,7 +1,7 @@
 from INTERVIEW.util import load_llm
 from INTERVIEW.EVALUATION.utils import qa_to_str
-from state import EvaluationState
-from schema import RoundEvaluation, Summary, FinalReport, ResourceItem
+from INTERVIEW.EVALUATION.state import EvaluationState
+from INTERVIEW.EVALUATION.schema import RoundEvaluation
 from datetime import date
 from langchain.prompts import ChatPromptTemplate
 
