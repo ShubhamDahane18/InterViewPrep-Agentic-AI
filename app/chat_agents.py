@@ -4,7 +4,7 @@
 from INTERVIEW.HR.state import HRState
 from INTERVIEW.TECHNICAL.state import TechRoundState
 from INTERVIEW.HR.hr_graph import hr_graph
-from app.db import save_hr_state, get_hr_state, get_hr_resume, get_jd,get_tech_resume , get_project_state , save_project_state , get_tech_state , save_tech_state , get_resume
+from app.db import save_hr_state, get_hr_state, get_hr_resume, get_jd,get_tech_resume ,get_candi_name, get_project_state , save_project_state , get_tech_state , save_tech_state , get_resume
 from typing import Dict
 
 
@@ -163,3 +163,46 @@ def process_tech_query(email: str, user_input: str) -> str:
 
     # Step 7: Return
     return state.model_dump().get("response")
+
+from INTERVIEW.EVALUATION.state import EvaluationState
+from INTERVIEW.EVALUATION.evaluation_graph import build_evaluation_graph
+
+def process_eval(round_name:str,email:str)->str:
+    
+    state = EvaluationState()    
+    state['jd_info'] = get_jd(email)
+    state['round_name'] = round_name
+    state['candidate_name'] = get_candi_name(email)
+    
+    if round_name == 'HR':
+        hr_state = get_hr_state(email)
+        state['questions_answers'] = hr_state.questions_answers
+    elif round_name=='Tech':
+        tech_state = get_tech_state(email)
+        state['questions_answers'] = tech_state.questions_answers
+    else:
+        pr_state = get_project_state(email)
+        qa = pr_state.questions_answers
+        project_name = []
+        for project in pr_state.projects:
+            project_name.append(project.name)
+        
+        old_keys = list(qa.keys())
+        new_qa = {}
+    
+        for i, old_key in enumerate(old_keys):
+            if i < len(project_name):
+                new_key = project_name[i]
+            else:
+                new_key = old_key  # fallback if fewer project names than QA sections
+            new_qa[new_key] = qa[old_key]
+            state['questions_answers'] = new_qa
+    
+    eval = build_evaluation_graph()
+    state_out = eval.invoke(state)
+    
+    return state_out['final_report']
+
+        
+        
+        

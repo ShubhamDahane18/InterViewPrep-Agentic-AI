@@ -18,7 +18,7 @@ class ExtractJobInfo(BaseModel):
     required_skills: List[str] = []
     
 class EvaluationState(TypedDict, total=False):
-    resume_info: Optional[Dict] = None
+    candidate_name : str
     questions_answers: Dict[str, List[Dict[str, Optional[str]]]] = {}
     jd_info :Optional[ExtractJobInfo] = None
     round_name: str = ''

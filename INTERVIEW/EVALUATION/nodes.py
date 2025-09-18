@@ -144,12 +144,9 @@ def final_report_node(state) -> dict:
 
     chain = final_report_prompt | llm | StrOutputParser()
 
-    candidate_name = ""
-    if state.get("resume_info"):
-        candidate_name = state["resume_info"].get("name")
 
     result = chain.invoke({
-        "candidate_name": candidate_name,
+        "candidate_name": state.get("candidate_name"),
         "round_name": state.get("round_name", ""),
         "evaluation": state.get("evaluation"),
         "summary": state.get("summary"),
