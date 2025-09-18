@@ -11,16 +11,12 @@ class ExtractJobInfo(BaseModel):
 
 class TechRoundState(BaseModel):
     candidate_name: str = ''
-    company_name: str = ''
     user_input: str = ''
     response: str = ''
-    core_subjects: Optional[List[str]] = None
+    limit:int = 3
+    section_name: str = "interviewer_intro"
+    get_user_intent: bool = False
+    is_qa: bool = False
     skills: Optional[Dict[str, List[str]]] = None
-    core_qa: Optional[List[Dict[str, str]]] = None
-    tech_qa: Optional[List[Dict[str, str]]] = None
-    decision: Optional[Dict[str, str]] = None
-    qa_counts: Optional[Dict[str, int]] = None
-    questions_per_topic: Optional[int] = None
-    max_questions_per_topic: Optional[int] = None
-    followups_used: Optional[Dict[str, int]] = None
+    questions_answers: Dict[str, List[Dict[str, Optional[str]]]] = {}
     job_info: Optional[ExtractJobInfo] = None
