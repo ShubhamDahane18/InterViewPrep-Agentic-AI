@@ -57,8 +57,7 @@ def evaluation_node(state: EvaluationState) -> EvaluationState:
     })
 
     # Update state
-    state["evaluation"] = result
-    return state
+    return {"evaluation":result.model_dump()}
 
 
 # --- Resource Node ---
