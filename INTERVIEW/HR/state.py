@@ -4,7 +4,7 @@ from pydantic import BaseModel
 class HRState(BaseModel):
     user_input: str = ''
     response: str = ''
-    limit: int = 5
+    limit: int = 3
     section_name: str = "interviewer_intro"
     get_user_intent: bool = False
     is_qa: bool = False
