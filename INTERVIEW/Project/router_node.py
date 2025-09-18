@@ -19,7 +19,7 @@ def router_node(state: ProjectState) -> Command[Literal["get_user_intent", "ask_
         updated_qa.setdefault(state.current_project_index, []).append(qa_pair)
 
 
-    if state.get_user_intent:
+    if state.get_user_intent==True:
         return Command(
             goto="get_user_intent" , 
             update={

@@ -110,4 +110,4 @@ def project_round_node(state: ProjectState) -> ProjectState:
 
     if state.section_name == "interviewer_intro":
         return {"response":question , "get_user_intent":True}
-    return {"response":question , "is_project_qa":True , "get_user_intend": False}
+    return {"response":question , "is_project_qa":True , "get_user_intent": False}
