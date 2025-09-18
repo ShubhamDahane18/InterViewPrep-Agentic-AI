@@ -89,7 +89,8 @@ def get_project_intent_node(state: ProjectState) -> Command[Literal["project_rou
             update={
                 "section_name": intent.section_name,
                 "response": intent.response,
-                "current_project_index": state.current_project_index + intent.delta
+                "current_project_index": state.current_project_index + intent.delta , 
+                "get_user_intend": False
             }
         )
 
@@ -99,6 +100,7 @@ def get_project_intent_node(state: ProjectState) -> Command[Literal["project_rou
         update={
             "section_name": intent.section_name,
             "response": intent.response,
-            "current_project_index": state.current_project_index + intent.delta
+            "current_project_index": state.current_project_index + intent.delta , 
+            "get_user_intend": False
         }
     )

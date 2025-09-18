@@ -70,7 +70,8 @@ def get_user_intent_node(state: HRState) -> Command[Literal["hr_round", END]]:
             goto=END,
             update={
                 "section_name": intent.section_name,
-                "response": intent.response
+                "response": intent.response , 
+                "get_user_intend": False
             }
         )
 
@@ -79,6 +80,7 @@ def get_user_intent_node(state: HRState) -> Command[Literal["hr_round", END]]:
         goto="hr_round",
         update={
             "section_name": intent.section_name,
-            "response": intent.response
+            "response": intent.response , 
+            "get_user_intend": False
         }
     )
