@@ -1,4 +1,4 @@
-from INTERVIEW.util import load_llm
+from INTERVIEW.util import load_eval_llm
 from INTERVIEW.EVALUATION.utils import qa_to_str
 from INTERVIEW.EVALUATION.state import EvaluationState
 from INTERVIEW.EVALUATION.schema import RoundEvaluation
@@ -44,7 +44,7 @@ Q&A Transcript:
 def evaluation_node(state: EvaluationState) -> EvaluationState:
 
     # LLM with structured output
-    llm = load_llm()
+    llm = load_eval_llm()
     llm_ws = llm.with_structured_output(RoundEvaluation)
 
     # Chain
@@ -91,7 +91,7 @@ def summary_node(state) -> dict:
     Generate a concise, professional summary of the candidate's performance
     based on evaluation and JD, and update the state.
     """
-    llm = load_llm()
+    llm = load_eval_llm()
     chain = summary_prompt | llm | StrOutputParser()
 
     result = chain.invoke({
@@ -140,7 +140,7 @@ def final_report_node(state) -> dict:
     """
     Generate a polished final report for the candidate including evaluation, summary, and candidate name.
     """
-    llm = load_llm()
+    llm = load_eval_llm()
 
     chain = final_report_prompt | llm | StrOutputParser()
 
