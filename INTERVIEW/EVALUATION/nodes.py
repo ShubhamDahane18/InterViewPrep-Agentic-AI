@@ -300,7 +300,7 @@ Overall Score = Σ(Dimension Score × Weight) / Σ(Weights)
 - Reference to specific transcript evidence
 
 **Template:**
-"The candidate scored {{score}}/10 based on {{round_type}} evaluation criteria. {{Performance_summary_sentence}}. Key strengths include {top_2-3_strengths}, demonstrating {competency_demonstrated}. However, {areas_needing_improvement} showed room for development. {Specific_evidence_reference}. Overall, the candidate {meets/exceeds/falls_short_of} expectations for {round_type}, with {particular_standout_or_concern}."
+"The candidate scored {{score}}/10 based on {{round_type}} evaluation criteria. {{Performance_summary_sentence}}. Key strengths include {{top_2-3_strengths}}, demonstrating {{competency_demonstrated}}. However, {{areas_needing_improvement}} showed room for development. {{Specific_evidence_reference}}. Overall, the candidate {{meets/exceeds/falls_short_of}} expectations for {{round_type}}, with {{particular_standout_or_concern}}."
 
 ### 3. Strengths (List[str], 3-5 items)
 **Requirements:**
