@@ -1,4 +1,5 @@
-from langchain.prompts import ChatPromptTemplate
+# from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 
 ask_next_prompt = ChatPromptTemplate.from_messages([
     ("system", """
@@ -134,7 +135,8 @@ Focus on:
 - Technology choices
 
 Example feedback:
-"Your architecture for {system} showed good understanding of {design_principle}, especially your consideration of {scalability/reliability/etc.}."
+"Your architecture for {system} showed good understanding of {design_principle}, especially your consideration of scalability, reliability, or similar trade-offs.
+"
 
 ### Tone Guidelines
 
