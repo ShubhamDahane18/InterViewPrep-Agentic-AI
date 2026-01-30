@@ -125,7 +125,7 @@ class IntentSchema(BaseModel):
     )
     response: str = Field(
         ...,
-        description="A polite HR-style confirmation message based on the user’s intent and the current section."
+        description="A polite HR-style confirmation message based on the user's intent and the current section."
     )
 
 from typing import Literal
@@ -134,20 +134,44 @@ from langgraph.types import Command
 from INTERVIEW.util import load_llm
 from INTERVIEW.HR.state import HRState
 
+def get_next_hr_section(current_section: str) -> str:
+    """Get the next section in HR interview sequence."""
+    section_sequence = [
+        "interviewer_intro", 
+        "intro", 
+        "personal_fit", 
+        "behavioral", 
+        "role_fit", 
+        "end"
+    ]
+    
+    try:
+        current_index = section_sequence.index(current_section)
+        if current_index < len(section_sequence) - 1:
+            return section_sequence[current_index + 1]
+        else:
+            return "end"  # Already at the end
+    except ValueError:
+        return "intro"  # Fallback if section not found
+
 def get_user_intent_node(state: HRState) -> Command[Literal["hr_round", END]]:
     # 1. Decide enforce_limit dynamically
     enforce_limit = len(state.questions_answers.get(state.section_name, [])) >= state.limit * 2
 
-    # 2. Run intent classifier
+    # 2. Get next section
+    next_section = get_next_hr_section(state.section_name)
+
+    # 3. Run intent classifier
     llm = load_llm()
     intent_chain = intent_prompt | llm.with_structured_output(IntentSchema)
     intent: IntentSchema = intent_chain.invoke({
         "section_name": state.section_name,
+        "next_section": next_section,  # ← ADDED
         "user_input": state.user_input,
         "enforce_limit": enforce_limit
     })
 
-    # 3. Handle intro + end explicitly
+    # 4. Handle intro + end explicitly
     if intent.section_name in ["interviewer_intro", "end"]:
         return Command(
             goto=END,
@@ -157,7 +181,7 @@ def get_user_intent_node(state: HRState) -> Command[Literal["hr_round", END]]:
             }
         )
 
-    # 4. Otherwise → go to HR round
+    # 5. Otherwise → go to HR round
     return Command(
         goto="hr_round",
         update={

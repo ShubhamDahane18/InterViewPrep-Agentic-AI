@@ -79,7 +79,7 @@ ELSE:
 **2. Architecture & Design**
 - **Core Questions**:
   - "Walk me through the high-level architecture of {project_name}"
-  - "Why did you choose {specific_tech} from your tech stack?"
+  - "Why did you choose specific_tech from your tech stack?"
   - "How did you structure the {frontend/backend/database} components?"
   - "What design patterns did you employ and why?"
 - **Follow-ups**:

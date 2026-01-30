@@ -79,18 +79,43 @@ def format_prev_qas(qas: list[dict]) -> str:
         for qa in qas
     )
 
+def get_next_section(current_section: str) -> str:
+    """Get the next section in the HR interview flow."""
+    section_sequence = [
+        "interviewer_intro", 
+        "intro", 
+        "personal_fit", 
+        "behavioral", 
+        "role_fit", 
+        "end"
+    ]
+    
+    try:
+        current_index = section_sequence.index(current_section)
+        if current_index < len(section_sequence) - 1:
+            return section_sequence[current_index + 1]
+        else:
+            return "end"  # Already at the end
+    except ValueError:
+        return "intro"  # Fallback if section not found
 
 from INTERVIEW.util import load_llm
 from INTERVIEW.HR.state import HRState
 from langchain_core.output_parsers import StrOutputParser
+
 def ask_user_what_next_node(state: HRState) -> HRState:
     """Use LLM to summarize and ask what candidate wants to do next."""
-
+    
     llm = load_llm()
     chain = ask_next_prompt | llm | StrOutputParser()
+    
+    # Get next section
+    next_section = get_next_section(state.section_name)
+    
     response = chain.invoke({
         "section_name": state.section_name,
+        "next_section": next_section,
         "questions_answers": format_prev_qas(state.questions_answers.get(state.section_name, []))
     })
 
-    return {'response':response ,'get_user_intent': True}
+    return {'response': response, 'get_user_intent': True}

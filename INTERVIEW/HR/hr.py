@@ -237,11 +237,15 @@ def hr_round_node(state: HRState) -> HRState:
 
     # Get context: previous Q/A in this round
     prev_qas = state.questions_answers.get(state.section_name, [])
+    
+    # Calculate question count
+    question_count = len(prev_qas)
 
     prompt = hr_question_prompt.format_messages(
         resume_info=state.resume_info,
         jd_info=state.jd_info,
         section_name=state.section_name,
+        question_count=question_count,  # ← ADDED
         prev_qas=format_prev_qas(prev_qas)
     )
 
@@ -249,6 +253,5 @@ def hr_round_node(state: HRState) -> HRState:
     response = llm.invoke(prompt)
     question = response.content.strip()
     if state.section_name == "interviewer_intro":
-        return {"response":question , "get_user_intent":True}
-    return {"response":question , "is_qa":True , "get_user_intent": False}
-    
+        return {"response": question, "get_user_intent": True}
+    return {"response": question, "is_qa": True, "get_user_intent": False}
