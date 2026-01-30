@@ -3,7 +3,8 @@ from INTERVIEW.EVALUATION.utils import qa_to_str
 from INTERVIEW.EVALUATION.state import EvaluationState
 from INTERVIEW.EVALUATION.schema import RoundEvaluation
 from datetime import date
-from langchain.prompts import ChatPromptTemplate
+# from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 
 
 evaluation_prompt = ChatPromptTemplate.from_messages([

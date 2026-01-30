@@ -1,5 +1,6 @@
 from INTERVIEW.Project.state import ProjectState
-from langchain.prompts import ChatPromptTemplate
+# from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 
 # -----------------------------
 # Project Question Prompt (with Past Interaction Handling)
