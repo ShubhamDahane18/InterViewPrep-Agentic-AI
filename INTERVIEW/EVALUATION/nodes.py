@@ -300,7 +300,7 @@ Overall Score = Σ(Dimension Score × Weight) / Σ(Weights)
 - Reference to specific transcript evidence
 
 **Template:**
-"The candidate scored {score}/10 based on {round_type} evaluation criteria. {Performance_summary_sentence}. Key strengths include {top_2-3_strengths}, demonstrating {competency_demonstrated}. However, {areas_needing_improvement} showed room for development. {Specific_evidence_reference}. Overall, the candidate {meets/exceeds/falls_short_of} expectations for {round_type}, with {particular_standout_or_concern}."
+"The candidate scored {{score}}/10 based on {{round_type}} evaluation criteria. {{Performance_summary_sentence}}. Key strengths include {top_2-3_strengths}, demonstrating {competency_demonstrated}. However, {areas_needing_improvement} showed room for development. {Specific_evidence_reference}. Overall, the candidate {meets/exceeds/falls_short_of} expectations for {round_type}, with {particular_standout_or_concern}."
 
 ### 3. Strengths (List[str], 3-5 items)
 **Requirements:**
@@ -487,7 +487,7 @@ Before submitting evaluation, verify:
 ### Evaluation Context
 
 **Round Type**: {round_name}
-**Candidate Name**: {candidate_name} (if available)
+**Candidate Name**: {{candidate_name}} (if available)
 
 **Complete Q&A Transcript:**
 {qa_text}
@@ -582,9 +582,9 @@ Create a concise, professional, and actionable summary that:
 - Tone: Professional and clear
 
 **Templates:**
-- "You demonstrated [strong/solid/developing] performance in the {round_name} round."
-- "Your {round_name} interview showed [exceptional/good/adequate] understanding of [key area]."
-- "In the {round_name} assessment, you exhibited [level] proficiency in [relevant skills]."
+- "You demonstrated [strong/solid/developing] performance in the {{round_name}} round."
+- "Your {{round_name}} interview showed [exceptional/good/adequate] understanding of [key area]."
+- "In the {{round_name}} assessment, you exhibited [level] proficiency in [relevant skills]."
 
 **2. Strengths Highlight (1-2 sentences)**
 - 2-3 specific strengths from evaluation
@@ -593,9 +593,9 @@ Create a concise, professional, and actionable summary that:
 - Tone: Appreciative and specific
 
 **Templates:**
-- "Your {specific_strength} was particularly impressive, especially {specific_example}, which aligns well with the {JD_requirement}."
-- "Notable strengths include {strength_1} and {strength_2}, both critical for success in this {role_aspect}."
-- "You excelled in {area}, demonstrating {specific_competency} that directly supports the role's need for {JD_requirement}."
+- "Your {{specific_strength}} was particularly impressive, especially {{specific_example}}, which aligns well with the {{JD_requirement}}."
+- "Notable strengths include {{strength_1}} and {{strength_2}}, both critical for success in this {{role_aspect}}."
+- "You excelled in {{area}}, demonstrating {{specific_competency}} that directly supports the role's need for {{JD_requirement}}."
 
 **3. Growth Areas (1 sentence)**
 - 1-2 key weaknesses from evaluation
@@ -604,9 +604,9 @@ Create a concise, professional, and actionable summary that:
 - Tone: Supportive and developmental
 
 **Templates:**
-- "To further strengthen your candidacy, focus on {specific_area}, particularly {specific_aspect}."
-- "Development opportunities exist in {area}, especially regarding {specific_gap}."
-- "Enhancing your {skill/competency} would better align with the role's requirements for {JD_aspect}."
+- "To further strengthen your candidacy, focus on {{specific_area}}, particularly {{specific_aspect}}."
+- "Development opportunities exist in {{area}}, especially regarding {{specific_gap}}."
+- "Enhancing your {{skill/competency}} would better align with the role's requirements for {{JD_aspect}}."
 
 **4. Actionable Recommendation (1 sentence)**
 - Top priority suggestion from evaluation
@@ -615,9 +615,9 @@ Create a concise, professional, and actionable summary that:
 - Tone: Empowering and clear
 
 **Templates:**
-- "I recommend {specific_action} to strengthen your {competency} for this role."
-- "Focus on {specific_suggestion} to enhance your readiness for {role_aspect}."
-- "Prioritize {action} to better demonstrate {desired_competency}."
+- "I recommend {{specific_action}} to strengthen your {{competency}} for this role."
+- "Focus on {{specific_suggestion}} to enhance your readiness for {{role_aspect}}."
+- "Prioritize {{action}} to better demonstrate {{desired_competency}}."
 
 **5. Encouraging Close (1 sentence, optional)**
 - Positive reinforcement
@@ -805,7 +805,7 @@ For each weakness:
 **Structure:** Lead with strong praise, minimal growth areas, advanced-level suggestions
 
 **Example Opening:**
-"You delivered an exceptional performance in the {round_name} round, demonstrating {top_strengths} that significantly exceed role expectations."
+"You delivered an exceptional performance in the {{round_name}} round, demonstrating {{top_strengths}} that significantly exceed role expectations."
 
 ---
 
@@ -814,8 +814,7 @@ For each weakness:
 **Structure:** Acknowledge solid areas, identify key gaps, provide clear improvement path
 
 **Example Opening:**
-"Your {round_name} interview showed solid foundational capabilities, particularly in {strength_area}, with clear opportunities for growth in {gap_area}."
-
+"Your {{round_name}} interview showed solid foundational capabilities, particularly in {{strength_area}}, with clear opportunities for growth in {{gap_area}}."
 ---
 
 ### For Low Scores (Below 5.5)
@@ -823,7 +822,7 @@ For each weakness:
 **Structure:** Find positives to acknowledge, frame gaps as learning opportunities, provide foundational guidance
 
 **Example Opening:**
-"In the {round_name} round, you showed {any_positive_aspect}, and there are important opportunities to develop {fundamental_skills} to better align with role requirements."
+"In the {{round_name}} round, you showed {{any_positive_aspect}}, and there are important opportunities to develop {{fundamental_skills}} to better align with role requirements."
 
 **Special Note:** Even for low scores, maintain dignity and respect. Focus on growth potential, not just deficits.
 
@@ -868,7 +867,7 @@ If evaluation has minimal information:
 - Don't fabricate or speculate
 
 **Example:**
-"Based on the {round_name} discussion, you showed {observed_strength} in {specific_area}. To fully assess fit for this role's requirement of {JD_aspect}, additional evaluation in {area} would be beneficial. Focus on {specific_suggestion} to prepare for deeper technical discussions."
+"Based on the {{round_name}} discussion, you showed {{observed_strength}} in {{specific_area}}. To fully assess fit for this role's requirement of {{JD_aspect}}, additional evaluation in {{area}} would be beneficial. Focus on {{specific_suggestion}} to prepare for deeper technical discussions."
 
 ### Scenario 2: Evaluation Shows Major Red Flags
 If evaluation indicates serious concerns:
@@ -878,7 +877,7 @@ If evaluation indicates serious concerns:
 - Provide realistic path forward
 
 **Example:**
-"The {round_name} interview revealed gaps in foundational {area} knowledge that are critical for this role. To successfully pursue positions requiring {JD_requirement}, I recommend focused study of {fundamental_topics} and hands-on practice with {specific_skills}. Consider revisiting core concepts through {resource_type} to build a stronger technical foundation."
+"The {{round_name}} interview revealed gaps in foundational {{area}} knowledge that are critical for this role. To successfully pursue positions requiring {{JD_requirement}}, I recommend focused study of {{fundamental_topics}} and hands-on practice with {{specific_skills}}. Consider revisiting core concepts through {{resource_type}} to build a stronger technical foundation."
 
 ### Scenario 3: Overqualified Candidate
 If evaluation shows candidate exceeds requirements:
@@ -888,7 +887,7 @@ If evaluation shows candidate exceeds requirements:
 - Maintain appropriate level of enthusiasm
 
 **Example:**
-"Your {round_name} performance demonstrated advanced proficiency well beyond the role's baseline requirements, particularly your {sophisticated_approach} to {complex_topic}. This level of expertise positions you well for the senior-level challenges in this role, especially {advanced_JD_aspect}. To maximize your impact, consider how you might mentor others in {skill_area} while continuing to deepen your knowledge in {cutting_edge_topic}."
+"Your {{round_name}} performance demonstrated advanced proficiency well beyond the role's baseline requirements, particularly your {{sophisticated_approach}} to {{complex_topic}}. This level of expertise positions you well for the senior-level challenges in this role, especially {{advanced_JD_aspect}}. To maximize your impact, consider how you might mentor others in {{skill_area}} while continuing to deepen your knowledge in {{cutting_edge_topic}}."
 
 ---
 
@@ -980,7 +979,7 @@ Instructions:
 - Return only the report text.
 """),
     ("human", """
-Candidate Name: {candidate_name}
+Candidate Name: {{candidate_name}}
 Round: {round_name}
 
 Evaluation:
@@ -1004,7 +1003,6 @@ def final_report_node(state) -> dict:
 
 
     result = chain.invoke({
-        "candidate_name": state.get("candidate_name"),
         "round_name": state.get("round_name", ""),
         "evaluation": state.get("evaluation"),
         "summary": state.get("summary"),
