@@ -242,22 +242,32 @@ from INTERVIEW.util import load_llm
 from INTERVIEW.Project.state import ProjectState
 
 def get_project_intent_node(state: ProjectState) -> Command[Literal["project_round", END]]:
+    # 1. Calculate context variables
     enforce_limit = len(state.questions_answers) >= 10
     total_projects = len(state.projects) if state.projects else 0
-    is_last_project = (
-        int(state.current_project_index) >= (total_projects - 1)
-        if total_projects > 0
-        else True
-    )
+    current_idx = int(state.current_project_index)
+    is_last_project = (current_idx >= total_projects - 1) if total_projects > 0 else True
+    
+    # Get current and next project names
+    current_project_name = state.projects[current_idx]["name"] if current_idx < total_projects else "Unknown"
+    
+    if is_last_project:
+        next_project_name = "N/A"
+    else:
+        next_project_name = state.projects[current_idx + 1]["name"]
 
     # 2. Run intent classifier
     llm = load_llm()
     intent_chain = project_intent_prompt | llm.with_structured_output(ProjectIntentSchema)
     intent: ProjectIntentSchema = intent_chain.invoke({
         "section_name": state.section_name,
-        "project_index": int(state.current_project_index),
+        "current_project_name": current_project_name,  # ← ADDED
+        "next_project_name": next_project_name,        # ← ADDED
+        "project_index": current_idx,
+        "total_projects": total_projects,              # ← ADDED
         "is_last_project": is_last_project,
         "user_input": state.user_input,
+        "user_name": state.user_name,                  # ← ADDED
         "enforce_limit": enforce_limit
     })
 
@@ -268,7 +278,7 @@ def get_project_intent_node(state: ProjectState) -> Command[Literal["project_rou
             update={
                 "section_name": intent.section_name,
                 "response": intent.response,
-                "current_project_index": str(int(state.current_project_index) + intent.delta)
+                "current_project_index": str(current_idx + intent.delta)
             }
         )
 
@@ -278,6 +288,6 @@ def get_project_intent_node(state: ProjectState) -> Command[Literal["project_rou
         update={
             "section_name": intent.section_name,
             "response": intent.response,
-            "current_project_index": str(int(state.current_project_index)+ intent.delta)
+            "current_project_index": str(current_idx + intent.delta)
         }
     )

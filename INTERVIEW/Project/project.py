@@ -337,56 +337,54 @@ Generate the next technical interview question following these rules:
 ])
 
 
+from INTERVIEW.Project.state import ProjectState
+from langchain_core.prompts import ChatPromptTemplate
 from INTERVIEW.util import load_llm
-from INTERVIEW.HR.state import HRState
 
 def format_prev_qas(qas: list[dict]) -> str:
     if not qas:
         return "None"
     return "\n".join(
         f"Q: {qa['question']}\nA: {qa['answer'] or '(not answered yet)'}"
-        for qa in reversed(qas)  # latest first
+        for qa in reversed(qas)
     )
 
-
-
 def project_round_node(state: ProjectState) -> ProjectState:
-    """Generate next HR interview question for the current round."""
+    """Generate next Project interview question."""
 
-    # Get context: previous Q/A in this round
-    prev_qas = state.questions_answers.get(state.section_name, [])
+    project_index = int(state.current_project_index) if state.current_project_index is not None else 0
+    project_qas = state.questions_answers.get(project_index, [])
+    question_count = len(project_qas) + 1
 
-    # Default project details (empty for intro etc.)
     project_name = ""
     project_time = ""
     project_tech_stack = ""
     project_features = ""
-    prev_qas = ""
+    prev_qas = "None"
 
-    # Only fetch project details if we are in project_loop
     if state.section_name == "project_loop" and state.projects:
-        if (
-            int(state.current_project_index) is not None
-            and 0 <= int(state.current_project_index) < len(state.projects)
-        ):
-            current_project = state.projects[int(state.current_project_index)]
-            current_project = current_project.model_dump()
+        if 0 <= project_index < len(state.projects):
+            current_project = state.projects[project_index].model_dump()
             project_name = current_project.get("name", "")
             project_time = current_project.get("time_period", "")
             project_tech_stack = current_project.get("tech_stack", "")
             project_features = current_project.get("features", "")
-            prev_qas = format_prev_qas(state.questions_answers.get(int(state.current_project_index), []))
+            prev_qas = format_prev_qas(project_qas)
 
+    total_projects = len(state.projects) if state.projects else 0
 
     prompt = project_question_prompt.format_messages(
         user_name=state.user_name,
         jd_info=state.jd_info,
         section_name=state.section_name,
-        prev_qas=prev_qas,
+        question_count=question_count,
         project_name=project_name,
         project_time=project_time,
         project_tech_stack=project_tech_stack,
         project_features=project_features,
+        total_projects=total_projects,
+        project_index=project_index,
+        prev_qas=prev_qas,
     )
 
     llm = load_llm()
@@ -394,5 +392,6 @@ def project_round_node(state: ProjectState) -> ProjectState:
     question = response.content.strip()
 
     if state.section_name == "interviewer_intro":
-        return {"response":question , "get_user_intent":True}
-    return {"response":question , "is_project_qa":True , "get_user_intent": False}
+        return {"response": question, "get_user_intent": True}
+
+    return {"response": question, "is_project_qa": True, "get_user_intent": False}

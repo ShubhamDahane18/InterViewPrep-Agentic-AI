@@ -1,5 +1,4 @@
-# from langchain.prompts import ChatPromptTemplate
-from langchain_core.prompts import ChatPromptTemplate
+from langchain.prompts import ChatPromptTemplate
 
 ask_next_project_prompt = ChatPromptTemplate.from_messages([
     ("system", """
@@ -161,7 +160,7 @@ def format_prev_qas(qas: list[dict]) -> str:
 
 
 from INTERVIEW.util import load_llm
-from INTERVIEW.Project.state import ProjectState  # <-- your project state model
+from INTERVIEW.Project.state import ProjectState
 from langchain_core.output_parsers import StrOutputParser
 
 def ask_user_next_project_node(state: ProjectState) -> ProjectState:
@@ -170,19 +169,32 @@ def ask_user_next_project_node(state: ProjectState) -> ProjectState:
     llm = load_llm()
     chain = ask_next_project_prompt | llm | StrOutputParser()
 
-    # Get QAs for the current project
-    current_project = state.projects[int(state.current_project_index)]
+    # Get current project info
+    current_idx = int(state.current_project_index)
+    current_project = state.projects[current_idx]
     project_name = current_project["name"]
-
-
+    
+    # Get next project info
+    total_projects = len(state.projects)
+    is_last_project = (current_idx >= total_projects - 1)
+    
+    if is_last_project:
+        next_project_name = "N/A"
+    else:
+        next_project_name = state.projects[current_idx + 1]["name"]
+    
+    # Get all project names
+    all_projects = ", ".join([p["name"] for p in state.projects])
 
     # Generate interviewer response
     response = chain.invoke({
         "user_name": state.user_name,
         "project_name": project_name,
-        "questions_answers": format_prev_qas(state.questions_answers[int(state.current_project_index)])
+        "next_project_name": next_project_name,  # ← ADDED
+        "is_last_project": is_last_project,      # ← ADDED
+        "all_projects": all_projects,            # ← ADDED
+        "questions_answers": format_prev_qas(state.questions_answers[current_idx])
     })
 
     # Mark that next step is → classify intent
-    state.get_user_intent = True
-    return {'get_user_intent': True , 'response':response}
+    return {'get_user_intent': True, 'response': response}

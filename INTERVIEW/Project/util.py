@@ -1,5 +1,8 @@
 import requests
 
+from INTERVIEW.HR.state import HRState
+from app.db import get_hr_state, save_hr_state
+
 def fetch_github_readme(repo_url: str) -> str | None:
     """
     Fetch README.md content from a GitHub repo.
