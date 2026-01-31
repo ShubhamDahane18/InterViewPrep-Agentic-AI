@@ -511,6 +511,7 @@ Conduct a comprehensive evaluation of this {round_name} interview round followin
 ```
 {{
   "score": <float 0.0-10.0>,
+  "feedback": "<concise overall feedback summary>",
   "reasoning": "<string>",
   "strengths": ["<string>", ...],
   "weaknesses": ["<string>", ...],
