@@ -2,7 +2,7 @@ from INTERVIEW.util import load_eval_llm
 from INTERVIEW.EVALUATION.utils import qa_to_str
 from INTERVIEW.EVALUATION.state import EvaluationState
 from INTERVIEW.EVALUATION.schema import RoundEvaluation
-from datetime import date
+from datetime import datetime
 # from langchain.prompts import ChatPromptTemplate
 from langchain_core.prompts import ChatPromptTemplate
 

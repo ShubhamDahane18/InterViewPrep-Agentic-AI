@@ -1,4 +1,11 @@
 import fitz  # PyMuPDF
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+
+from langchain_openai import ChatOpenAI
+from langchain_groq import ChatGroq
 
 def extract_text_and_links_from_pdf(pdf):
     full_text = ""
@@ -27,21 +34,11 @@ def extract_text_and_links_from_pdf(pdf):
     return full_text, links
 
 
-import os
-from dotenv import load_dotenv
-load_dotenv()
-
-
-from langchain_openai import ChatOpenAI
-from langchain_groq import ChatGroq
-from langchain_google_genai import ChatGoogleGenerativeAI
-# llm = ChatOpenAI(model="gpt-4o-mini" , api_key=os.getenv("OPENAI_API_KEY"))
-llm_eval = ChatGoogleGenerativeAI(model =os.getenv("GEMINI_MODEL_NAME"),api_key = os.getenv("GOOGLE_API_KEY") )
-llm = ChatGroq(model=os.getenv("GROQ_MODEL_NAME") , api_key=os.getenv("GROQ_API_KEY"))
+llm =ChatGroq(model=os.getenv("GROQ_MODEL_NAME") , api_key=os.getenv("GROQ_API_KEY"))
 
 def load_llm():
     return llm
 
 def load_eval_llm():
-    return llm_eval
+    return llm
 
